@@ -1,0 +1,99 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_container
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --loglevel warning
+    volumes:
+      - ./docker-volumes/cache:/data
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_container
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker-volumes/data:/data/db
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker-volumes/mysql:/var/lib/mysql/
+  postgres:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-volumes/postgres:/var/lib/postgresql
+  # rabbitmq:
+  #   image: rabbitmq:3.13-rc-management-alpine
+  #   container_name: rabbitmq_container
+  #   restart: always
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+  #     - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+  #   ports:
+  #     - "5672:5672" # AMQP protocol port
+  #     - "15672:15672" # Management UI port
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+  #   container_name: elasticsearch_container
+  #   restart: always
+  #   environment:
+  #     ES_JAVA_OPTS: -Xmx1g -Xms1g
+  #     bootstrap.memory_lock: "true"
+  #     discovery.type: single-node
+  #     network.host: 0.0.0.0
+  #     transport.host: 127.0.0.1
+  #     http.host: 0.0.0.0
+  #     xpack.security.enabled: "true"
+  #     xpack.security.authc.api_key.enabled: "true"
+  #     xpack.monitoring.collection.enabled: "true"
+  #     xpack.security.enrollment.enabled: "true"
+  #     xpack.security.authc.token.enabled: "true"
+  #     cluster.routing.allocation.disk.threshold_enabled: false
+  #     ELASTIC_PASSWORD: ${ELASTIC_PASSWORD} 
+  #   ports:
+  #     - "9200:9200" # REST API port (Single-node cluster)
+  #     - "9300:9300" # Inter-node communication port
+  #   volumes:
+  #     - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - elastic
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.15.1
+  #   container_name: kibana_container
+  #   restart: always
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=["http://elasticsearch_container:9200"]
+  #     - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
+  #     - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+  #     - ELASTICSEARCH_SERVICEACCOUNT_TOKEN=${ELASTICSEARCH_SERVICEACCOUNT_TOKEN}
+  #     - XPACK_FLEET_AGENTS_ELASTICSEARCH_HOSTS=["http://elasticsearch_container:9200"]
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - elastic
+  #   volumes:
+  #     - ./kibana.yml/:/usr/share/kibana/config/kibana.yml:ro
+  #   depends_on:
+  #     - elasticsearch
+
+networks:
+  elastic:
+    name: elastic
