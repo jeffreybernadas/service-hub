@@ -14,7 +14,7 @@ A microservice-powered web application that connects customers with contractors 
 - To be listed
 
 ## 🔧 Helper Library
-- Helper private NPM library of this project can be found [here](https://github.com/Bernz322/forhire-helper).
+- Helper private NPM library of this project can be found [here](https://github.com/jeffreybernadas/service-hub-helper).
 
 <hr />
 
@@ -24,4 +24,4 @@ A microservice-powered web application that connects customers with contractors 
 Will be deployed in [Vercel](https://vercel.com/) (indefinite).
 
 - **_Services + DB_**
-Will be deployed in my own server running Ubuntu, Docker, Nginx, and Cloudflare tunnel.
+Will be deployed in my VPS.
