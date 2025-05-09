@@ -10,7 +10,9 @@ import { API_PREFIX, API_VERSION } from "@notifications/constants/version.consta
 import { checkConnection } from "@notifications/utils/elasticsearch.util";
 import { log } from "@notifications/utils/logger.util";
 import enhancedResponse from "@notifications/middleware/enhancedResponse.middleware";
-
+import { createConnection } from "@notifications/configs/rabbitmq.config";
+import { consumerAuthEmail } from "./handlers/queues/auth.consumer";
+import { consumerOrderEmail } from "./handlers/queues/order.consumer";
 const app = express();
 
 app.use(express.json());
@@ -24,6 +26,11 @@ app.get(`${API_PREFIX}/health`, healthCheckHandler);
 app.use(errorHandler);
 
 const startServer = async () => {
+  // First establish connection to RabbitMQ
+  const channel = await createConnection();
+  await consumerAuthEmail(channel);
+  await consumerOrderEmail(channel);
+
   // First establish connection to Elasticsearch
   await checkConnection();
 

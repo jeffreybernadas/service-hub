@@ -13,6 +13,7 @@ const getEnv = (key: string, defaultValue?: string): string => {
 };
 
 export const PORT = getEnv("PORT", "3102");
+export const CLIENT_URL = getEnv("CLIENT_URL", "http://localhost:3000");
 export const SERVICE_NAME = getEnv("SERVICE_NAME");
 export const APP_ORIGIN = getEnv("APP_ORIGIN");
 export const NODE_ENV = getEnv("NODE_ENV", "development");
