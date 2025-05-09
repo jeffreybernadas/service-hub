@@ -1,9 +1,14 @@
 import "dotenv/config";
+// Import APM first but don't initialize it yet - we'll do that after Elasticsearch connects
+import { initializeApm } from "@notifications/utils/apm.util";
 import express from "express";
 import cors from "cors";
+import { errorHandler } from "@jeffreybernadas/service-hub-helper";
 import healthCheckHandler from "@notifications/routes/health.route";
-import { APP_ORIGIN, PORT } from "@notifications/constants/env.constants";
+import { APP_ORIGIN, PORT, SERVICE_NAME } from "@notifications/constants/env.constants";
 import { API_PREFIX, API_VERSION } from "@notifications/constants/version.constant";
+import { checkConnection } from "@notifications/utils/elasticsearch.util";
+import { log } from "@notifications/utils/logger.util";
 
 const app = express();
 
@@ -13,6 +18,21 @@ app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 
 app.get(`${API_PREFIX}/health`, healthCheckHandler);
 
-app.listen(PORT, () => {
-  console.log(`Notification Service (${API_VERSION}) is running on port ${PORT}.`);
+app.use(errorHandler);
+
+const startServer = async () => {
+  // First establish connection to Elasticsearch
+  await checkConnection();
+
+  // Initialize APM after Elasticsearch is connected
+  initializeApm();
+
+  app.listen(PORT, () => {
+    log.info(`Notification Service (${API_VERSION}) is running on port ${PORT}.`);
+  });
+};
+
+startServer().catch((error) => {
+  log.error(`Failed to start ${SERVICE_NAME}:`, error);
+  process.exit(1);
 });
