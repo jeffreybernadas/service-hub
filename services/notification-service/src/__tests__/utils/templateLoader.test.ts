@@ -9,10 +9,10 @@ jest.mock("path");
 describe("Template Loader Utility", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock path.join to return a predictable path
     (path.join as jest.Mock).mockReturnValue("/mocked/path/to/template.html");
-    
+
     // Mock fs.readFileSync to return a template with placeholders
     (fs.readFileSync as jest.Mock).mockReturnValue(
       "<!DOCTYPE html><html><body><h1>Hello {{name}}</h1><p>Click <a href='{{url}}'>here</a></p></body></html>"
@@ -21,13 +21,15 @@ describe("Template Loader Utility", () => {
 
   it("should load a template and replace placeholders", () => {
     const result = loadTemplate("test-template", {
-      name: "John",
-      url: "https://example.com",
+      data: {
+        name: "John",
+        url: "https://example.com",
+      },
     });
 
     // Verify the template was loaded
     expect(fs.readFileSync).toHaveBeenCalledWith("/mocked/path/to/template.html", "utf-8");
-    
+
     // Verify placeholders were replaced
     expect(result).toContain("<h1>Hello John</h1>");
     expect(result).toContain("<a href='https://example.com'>");
@@ -41,7 +43,7 @@ describe("Template Loader Utility", () => {
 
     // Verify that the function throws an error
     expect(() => {
-      loadTemplate("non-existent-template", { name: "John" });
+      loadTemplate("non-existent-template", { data: { name: "John" } });
     }).toThrow("Failed to load email template: non-existent-template");
   });
 });
