@@ -1,8 +1,11 @@
+import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
 import {
   AmqpChannel,
   createConnection,
 } from "@notifications/configs/rabbitmq.config";
+import { CLIENT_URL } from "@notifications/constants/env.constants";
 import {
+  IAuthEmailTemplates,
   IOTPVerificationTemplateData,
   IPasswordResetTemplateData,
   IVerifyEmailTemplateData,
@@ -51,11 +54,20 @@ export const consumerAuthEmail = async (
           appLink,
           otp,
           username,
+        }: {
+          template: IAuthEmailTemplates;
+          receiverEmail: string;
+          resetLink: IEmailLocals["resetLink"];
+          verifyLink: IEmailLocals["verifyLink"];
+          appIcon: IEmailLocals["appIcon"];
+          appLink: IEmailLocals["appLink"];
+          otp: IEmailLocals["otp"];
+          username: IEmailLocals["username"];
         } = JSON.parse(msg!.content.toString());
 
         if (template === "verify-email") {
           const templateData: IVerifyEmailTemplateData = {
-            url: verifyLink,
+            url: verifyLink ?? CLIENT_URL,
             appIcon,
             appLink,
           };
@@ -65,10 +77,10 @@ export const consumerAuthEmail = async (
           });
         } else if (template === "password-reset") {
           const templateData: IPasswordResetTemplateData = {
-            url: resetLink,
+            url: resetLink ?? CLIENT_URL,
             appIcon,
             appLink,
-            username,
+            username: username ?? "",
           };
           await sendMail({
             to: receiverEmail,
@@ -76,10 +88,10 @@ export const consumerAuthEmail = async (
           });
         } else if (template === "otp-verification") {
           const templateData: IOTPVerificationTemplateData = {
-            otp,
+            otp: otp ?? "",
             appIcon,
             appLink,
-            username,
+            username: username ?? "",
           };
           await sendMail({
             to: receiverEmail,

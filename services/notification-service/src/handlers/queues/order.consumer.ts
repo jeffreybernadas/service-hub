@@ -14,8 +14,10 @@ import { ConsumeMessage } from "amqplib";
 import {
   IOrderPlacedTemplateData,
   IOrderReceiptTemplateData,
-  IGenericEmailTemplateData
+  IGenericEmailTemplateData,
+  IAuthEmailTemplates
 } from "@notifications/types/email.types";
+import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
 
 export const consumerOrderEmail = async (
   channel: AmqpChannel | undefined,
@@ -60,6 +62,23 @@ export const consumerOrderEmail = async (
           message,
           serviceFee,
           total
+        }: {
+          receiverEmail: string;
+          template: IAuthEmailTemplates;
+          amount: IEmailLocals['amount'];
+          customerUsername: IEmailLocals['customerUsername'];
+          contractorUsername: IEmailLocals['contractorUsername'];
+          title: IEmailLocals['title'];
+          description: IEmailLocals['description'];
+          orderId: IEmailLocals['orderId'];
+          orderDue: IEmailLocals['orderDue'];
+          requirements: IEmailLocals['requirements'];
+          orderUrl: IEmailLocals['orderUrl'];
+          subject: IEmailLocals['subject'];
+          header: IEmailLocals['header'];
+          message: IEmailLocals['message'];
+          serviceFee: IEmailLocals['serviceFee'];
+          total: IEmailLocals['total'];
         } = JSON.parse(msg!.content.toString());
         // Common data for all templates
         const baseTemplateData = {
@@ -77,9 +96,9 @@ export const consumerOrderEmail = async (
             orderDue: orderDue ?? '',
             title: title ?? '',
             description: description ?? '',
-            amount: amount ?? 0,
+            amount: amount ?? '0',
             requirements: requirements ?? '',
-            orderUrl: orderUrl ?? '',
+            orderUrl: orderUrl ?? CLIENT_URL,
           };
 
           // Create order receipt template data
@@ -88,10 +107,10 @@ export const consumerOrderEmail = async (
             customerUsername: customerUsername ?? '',
             title: title ?? '',
             description: description ?? '',
-            amount: amount ?? 0,
-            serviceFee: serviceFee ?? 0,
-            total: total ?? 0,
-            orderUrl: orderUrl ?? '',
+            amount: amount ?? '0',
+            serviceFee: serviceFee ?? '0',
+            total: total ?? '0',
+            orderUrl: orderUrl ?? CLIENT_URL,
             orderId: orderId ?? '',
           };
 
