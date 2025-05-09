@@ -9,12 +9,15 @@ import { APP_ORIGIN, PORT, SERVICE_NAME } from "@notifications/constants/env.con
 import { API_PREFIX, API_VERSION } from "@notifications/constants/version.constant";
 import { checkConnection } from "@notifications/utils/elasticsearch.util";
 import { log } from "@notifications/utils/logger.util";
+import enhancedResponse from "@notifications/middleware/enhancedResponse.middleware";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: APP_ORIGIN, credentials: true }));
+
+app.use(enhancedResponse);
 
 app.get(`${API_PREFIX}/health`, healthCheckHandler);
 
