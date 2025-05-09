@@ -19,6 +19,7 @@ export interface IPasswordResetTemplateData extends IEmailLocals {
  */
 export interface IOTPVerificationTemplateData extends IEmailLocals {
   otp: string;
+  username: string;
 }
 
 /**

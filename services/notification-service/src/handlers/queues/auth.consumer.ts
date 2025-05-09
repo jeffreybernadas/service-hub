@@ -2,8 +2,16 @@ import {
   AmqpChannel,
   createConnection,
 } from "@notifications/configs/rabbitmq.config";
-import { IOTPVerificationTemplateData, IPasswordResetTemplateData, IVerifyEmailTemplateData } from "@notifications/types/email.types";
-import { getOTPVerificationTemplate, getPasswordResetTemplate, getVerifyEmailTemplate } from "@notifications/utils/emailTemplates.util";
+import {
+  IOTPVerificationTemplateData,
+  IPasswordResetTemplateData,
+  IVerifyEmailTemplateData,
+} from "@notifications/types/email.types";
+import {
+  getOTPVerificationTemplate,
+  getPasswordResetTemplate,
+  getVerifyEmailTemplate,
+} from "@notifications/utils/emailTemplates.util";
 import { log } from "@notifications/utils/logger.util";
 import { sendMail } from "@notifications/utils/sendMail.util";
 import { ConsumeMessage } from "amqplib";
@@ -34,8 +42,16 @@ export const consumerAuthEmail = async (
     channel.consume(
       serviceHubQueue.queue,
       async (msg: ConsumeMessage | null) => {
-        const { receiverEmail, resetLink, verifyLink, template, appIcon, appLink, otp } =
-          JSON.parse(msg!.content.toString());
+        const {
+          receiverEmail,
+          resetLink,
+          verifyLink,
+          template,
+          appIcon,
+          appLink,
+          otp,
+          username,
+        } = JSON.parse(msg!.content.toString());
 
         if (template === "verify-email") {
           const templateData: IVerifyEmailTemplateData = {
@@ -62,6 +78,7 @@ export const consumerAuthEmail = async (
             otp,
             appIcon,
             appLink,
+            username,
           };
           await sendMail({
             to: receiverEmail,

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generic Email Template">
-    <title>Generic Email Template</title>
+    <meta name="description" content="OTP Verification Email Template">
+    <title>OTP Verification Email Template</title>
     <style>
       body {
         margin: 0;
@@ -56,20 +56,12 @@
         line-height: 24px;
         margin: 0;
       }
-      .action-button {
-        background: #4aa1f3;
-        color: #fff;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-size: 14px;
-        font-weight: 500;
-        padding: 10px 24px;
-        border-radius: 50px;
-        display: inline-block;
-        margin-top: 24px;
-      }
-      .action-button:hover {
-        text-decoration: underline;
+      .otp-code {
+        font-weight: bold;
+        color: #1e1e2d;
+        font-size: 24px;
+        margin: 15px 0;
+        display: block;
       }
       .footer {
         text-align: center;
@@ -90,12 +82,13 @@
           <a href="{{appLink}}" target="_blank" rel="noopener noreferrer">
             <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon">
           </a>
-          <h1 class="title">{{header}}</h1>
+          <h1 class="title">Multi-Factor Authentication</h1>
           <div class="divider"></div>
-          <p class="description">{{message}}</p>
-          <a href="{{appLink}}" class="action-button" target="_blank" rel="noopener noreferrer">
-            Go to Service Hub Platform
-          </a>
+          <p class="description">
+            Hi {{username}},<br><br>
+            Your 6-Digit verification code is <span class="otp-code">{{otp}}</span><br>
+            This code was sent to you to verify your login.
+          </p>
         </div>
         <div class="footer">
           <p class="footer-text">&copy; Service Hub</p>
