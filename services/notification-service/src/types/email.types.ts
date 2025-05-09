@@ -1,5 +1,19 @@
 import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
 
+export type IAuthEmailTemplates =
+  | "verify-email"
+  | "password-reset"
+  | "password-reset-success"
+  | "otp-verification"
+  | "order-placed"
+  | "order-receipt"
+  | "order-delivered"
+  | "order-extension"
+  | "order-extension-approval"
+  | "custom-offer"
+  | "subscription-success"
+  | "generic-mail";
+
 /**
  * Interface for verify email template data
  */
@@ -12,6 +26,13 @@ export interface IVerifyEmailTemplateData extends IEmailLocals {
  */
 export interface IPasswordResetTemplateData extends IEmailLocals {
   url: string;
+  username: string;
+}
+
+/**
+ * Interface for password reset success email template data
+ */
+export interface IPasswordResetSuccessTemplateData extends IEmailLocals {
   username: string;
 }
 
@@ -52,6 +73,18 @@ export interface IOrderReceiptTemplateData extends IEmailLocals {
   orderId: string;
 }
 
+/**
+ * Interface for custom offer email template data
+ */
+export interface ICustomOfferTemplateData extends IEmailLocals {
+  customerUsername: string;
+  contractorUsername: string;
+  title: string;
+  description: string;
+  deliveryDays: string;
+  offerLink: string;
+  amount: string;
+}
 /**
  * Interface for generic email template data
  */

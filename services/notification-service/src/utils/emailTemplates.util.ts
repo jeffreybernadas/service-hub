@@ -5,7 +5,9 @@ import {
   IGenericEmailTemplateData,
   IVerifyEmailTemplateData,
   IPasswordResetTemplateData,
-  IOTPVerificationTemplateData
+  IOTPVerificationTemplateData,
+  IPasswordResetSuccessTemplateData,
+  ICustomOfferTemplateData,
 } from "@notifications/types/email.types";
 
 /**
@@ -17,6 +19,19 @@ export const getPasswordResetTemplate = (data: IPasswordResetTemplateData) => ({
   subject: "Password Reset Request",
   text: `You requested a password reset. Click on the link to reset your password: ${data.url}`,
   html: loadTemplate("password-reset", { data }),
+});
+
+/**
+ * Returns the password reset success email template
+ * @param data The password reset success template data
+ * @returns Email template object with subject, text, and HTML content
+ */
+export const getPasswordResetSuccessTemplate = (
+  data: IPasswordResetSuccessTemplateData,
+) => ({
+  subject: "Password Reset Successful",
+  text: `Your password has been successfully reset. You can now log in to your account using your new password.`,
+  html: loadTemplate("password-reset-success", { data }),
 });
 
 /**
@@ -35,10 +50,23 @@ export const getVerifyEmailTemplate = (data: IVerifyEmailTemplateData) => ({
  * @param data The OTP verification template data
  * @returns Email template object with subject, text, and HTML content
  */
-export const getOTPVerificationTemplate = (data: IOTPVerificationTemplateData) => ({
+export const getOTPVerificationTemplate = (
+  data: IOTPVerificationTemplateData,
+) => ({
   subject: "OTP Verification",
   text: `Your OTP is: ${data.otp}`,
   html: loadTemplate("otp-verification", { data }),
+});
+
+/**
+ * Returns the custom offer email template
+ * @param data The custom offer template data
+ * @returns Email template object with subject, text, and HTML content
+ */
+export const getCustomOfferTemplate = (data: ICustomOfferTemplateData) => ({
+  subject: `New Custom Offer from ${data.contractorUsername}`,
+  text: `You have received a new custom offer from ${data.contractorUsername}.`,
+  html: loadTemplate("custom-offer", { data }),
 });
 
 /**

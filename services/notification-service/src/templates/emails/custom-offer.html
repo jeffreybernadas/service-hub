@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Custom Offer Email Template">
+    <title>Custom Offer Email Template</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f3f8;
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 670px;
+        margin: 0 auto;
+        padding: 80px 20px;
+      }
+      .email-container {
+        width: 100%;
+        max-width: 670px;
+        margin: 0 auto;
+      }
+      .content-wrapper {
+        background: #fff;
+        border-radius: 3px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 6px 18px 0 rgba(0,0,0,.06);
+      }
+      .app-icon {
+        width: 70px;
+        vertical-align: middle;
+        border: 0;
+        margin-bottom: 20px;
+      }
+      .title {
+        color: #1e1e2d;
+        font-weight: 500;
+        margin: 0;
+        font-size: 32px;
+        font-family: 'Rubik', sans-serif;
+      }
+      .subtitle {
+        color: #1e1e2d;
+        font-weight: 500;
+        margin: 10px 0 0;
+        font-size: 20px;
+        font-family: 'Rubik', sans-serif;
+      }
+      .divider {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 29px 0 26px;
+        border-bottom: 1px solid #cecece;
+        width: 100px;
+      }
+      .offer-container {
+        text-align: left;
+        margin-top: 30px;
+        border-top: 1px solid #cecece;
+        padding-top: 20px;
+      }
+      .offer-title {
+        color: #1e1e2d;
+        font-weight: 700;
+        font-size: 18px;
+        margin: 0 0 15px;
+        font-family: 'Rubik', sans-serif;
+      }
+      .offer-description {
+        color: #455056;
+        font-size: 15px;
+        line-height: 24px;
+        margin: 0 0 20px;
+      }
+      .offer-details {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-bottom: 1px solid #cecece;
+        padding-bottom: 15px;
+      }
+      .offer-details li {
+        color: #455056;
+        font-size: 15px;
+        line-height: 24px;
+        margin-bottom: 10px;
+      }
+      .button-container {
+        text-align: center;
+        margin-top: 30px;
+      }
+      .action-button {
+        background: #4aa1f3;
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 12px 35px;
+        border-radius: 50px;
+        display: inline-block;
+      }
+      .action-button:hover {
+        text-decoration: underline;
+      }
+      .signature {
+        margin-top: 30px;
+        color: #455056;
+        font-size: 15px;
+        line-height: 24px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .footer-text {
+        font-size: 14px;
+        color: rgba(69, 80, 86, 0.74);
+        line-height: 18px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="email-container">
+        <div class="content-wrapper">
+          <a href="{{appLink}}" target="_blank" rel="noopener noreferrer">
+            <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon">
+          </a>
+          <h1 class="title">Hi {{customerUsername}}</h1>
+          <h2 class="subtitle">{{contractorUsername}} sent you a new Custom Offer</h2>
+          <div class="divider"></div>
+
+          <div class="offer-container">
+            <h3 class="offer-title">{{title}}</h3>
+            <p class="offer-description">{{description}}</p>
+            <ul class="offer-details">
+              <li>
+                <strong>Delivery Time:</strong> {{deliveryDays}} days
+              </li>
+            </ul>
+            <div class="button-container">
+              <a href="{{offerLink}}" class="action-button" target="_blank" rel="noopener noreferrer">
+                Order Now (${{amount}})
+              </a>
+            </div>
+            <div class="signature">
+              Thanks,<br>
+              The Service Hub Team
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <p class="footer-text">&copy; Service Hub</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
