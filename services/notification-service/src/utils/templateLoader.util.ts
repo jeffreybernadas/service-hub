@@ -5,12 +5,12 @@ import { log } from "./logger.util";
 /**
  * Loads an HTML template from the file system and replaces placeholders with values
  * @param templateName The name of the template file (without extension)
- * @param replacements An object with key-value pairs for replacements
+ * @param replacements An object with string keys and any values for replacements
  * @returns The processed HTML string
  */
 export const loadTemplate = <T extends Record<string, unknown>>(
   templateName: string,
-  replacements: T
+  replacements: T,
 ): string => {
   try {
     // Construct the template path
@@ -19,7 +19,7 @@ export const loadTemplate = <T extends Record<string, unknown>>(
       "..",
       "templates",
       "emails",
-      `${templateName}.html`
+      `${templateName}.html`,
     );
 
     // Read the template file
@@ -29,7 +29,8 @@ export const loadTemplate = <T extends Record<string, unknown>>(
     Object.entries(replacements).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         const placeholder = new RegExp(`{{${key}}}`, "g");
-        const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+        const stringValue =
+          typeof value === "object" ? JSON.stringify(value) : String(value);
         templateContent = templateContent.replace(placeholder, stringValue);
       }
     });

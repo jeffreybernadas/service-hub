@@ -1,23 +1,37 @@
+import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
+
 /**
- * Base interface for all email templates
+ * Interface for verify email template data
  */
-export interface BaseEmailTemplateData {
-  appLink: string;
-  appIcon: string;
-  [key: string]: unknown;
+export interface IVerifyEmailTemplateData extends IEmailLocals {
+  url: string;
+}
+
+/**
+ * Interface for password reset email template data
+ */
+export interface IPasswordResetTemplateData extends IEmailLocals {
+  url: string;
+}
+
+/**
+ * Interface for OTP verification email template data
+ */
+export interface IOTPVerificationTemplateData extends IEmailLocals {
+  otp: string;
 }
 
 /**
  * Interface for order placed email template data
  */
-export interface OrderPlacedTemplateData extends BaseEmailTemplateData {
+export interface IOrderPlacedTemplateData extends IEmailLocals {
   customerUsername: string;
   contractorUsername: string;
   orderId: string;
   orderDue: string;
   title: string;
   description: string;
-  amount: string | number;
+  amount: string;
   requirements: string;
   orderUrl: string;
 }
@@ -25,21 +39,21 @@ export interface OrderPlacedTemplateData extends BaseEmailTemplateData {
 /**
  * Interface for order receipt email template data
  */
-export interface OrderReceiptTemplateData extends BaseEmailTemplateData {
+export interface IOrderReceiptTemplateData extends IEmailLocals {
   customerUsername: string;
   title: string;
   description: string;
-  amount: string | number;
-  serviceFee: string | number;
-  total: string | number;
+  amount: string;
+  serviceFee: string;
+  total: string;
   orderUrl: string;
-  orderId: string; // Added this as it's used in the text template
+  orderId: string;
 }
 
 /**
  * Interface for generic email template data
  */
-export interface GenericEmailTemplateData extends BaseEmailTemplateData {
+export interface IGenericEmailTemplateData extends IEmailLocals {
   header: string;
   message: string;
   subject?: string;
