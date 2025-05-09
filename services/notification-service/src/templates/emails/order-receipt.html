@@ -1,185 +1,190 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
-<head>
-  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-  <title>Order Receipt Email Template</title>
-  <meta name="description" content="Order Receipt Email Template.">
-  <style type="text/css">
-    a:hover {
-      text-decoration: underline !important;
-    }
-  </style>
-</head>
-<body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0 !important; padding: 0 !important;">
-  <div style="margin: 0 !important; padding: 0 !important;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tbody>
-        <tr>
-          <td width="100%" align="center" valign="top" bgcolor="#eeeeee" height="20"></td>
-        </tr>
-        <tr>
-          <td bgcolor="#eeeeee" align="center" style="padding: 0px 15px 0px 15px;">
-            <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%"
-              style="max-width: 600px;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order Receipt Email Template">
+    <title>Order Receipt Email Template</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f3f8;
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 670px;
+        margin: 0 auto;
+        padding: 80px 20px;
+      }
+      .email-container {
+        width: 100%;
+        max-width: 670px;
+        margin: 0 auto;
+      }
+      .content-wrapper {
+        background: #fff;
+        border-radius: 3px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 6px 18px 0 rgba(0,0,0,.06);
+      }
+      .app-icon {
+        width: 70px;
+        vertical-align: middle;
+        border: 0;
+        margin-bottom: 20px;
+      }
+      .title {
+        color: #1e1e2d;
+        font-weight: 500;
+        margin: 0;
+        font-size: 32px;
+        font-family: 'Rubik', sans-serif;
+      }
+      .divider {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 29px 0 26px;
+        border-bottom: 1px solid #cecece;
+        width: 100px;
+      }
+      .description {
+        color: #455056;
+        font-size: 15px;
+        line-height: 24px;
+        margin: 0;
+        text-align: left;
+      }
+      .order-table {
+        width: 100%;
+        margin: 30px 0;
+        border-collapse: collapse;
+        color: #455056;
+        font-family: 'Rubik', sans-serif;
+        background-color: #f2f2f2;
+      }
+      .order-table th {
+        color: #1e1e2d;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #fff;
+      }
+      .order-table td {
+        padding: 12px;
+        border-bottom: 1px solid #fff;
+        border-right: 1px solid #fff;
+      }
+      .order-table td:last-child {
+        border-right: none;
+      }
+      .order-table .price-column {
+        text-align: right;
+        width: 40px;
+      }
+      .order-table .qty-column {
+        width: 20%;
+      }
+      .total-row {
+        text-align: right;
+        padding: 15px 12px;
+        color: #1e1e2d;
+        font-weight: 700;
+        font-size: 16px;
+        background-color: #f2f2f2;
+        border-top: 1px solid #fff;
+      }
+      .action-button {
+        background: #4aa1f3;
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 24px;
+        border-radius: 50px;
+        display: inline-block;
+        margin: 24px auto 0;
+      }
+      .action-button:hover {
+        text-decoration: underline;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .footer-text {
+        font-size: 14px;
+        color: rgba(69, 80, 86, 0.74);
+        line-height: 18px;
+        margin: 0;
+      }
+      .signature {
+        margin-top: 30px;
+        color: #455056;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="email-container">
+        <div class="content-wrapper">
+          <a href="{{appLink}}" target="_blank" rel="noopener noreferrer">
+            <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon">
+          </a>
+          <h1 class="title">Your Order Receipt</h1>
+          <div class="divider"></div>
+          <div class="description">
+            <p>Hi {{customerUsername}},</p>
+            <p>Thank you for your order. Here's your receipt:</p>
+
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="qty-column">Qty</th>
+                  <th class="price-column">Price</th>
+                </tr>
+              </thead>
               <tbody>
                 <tr>
                   <td>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tbody>
-                        <tr>
-                          <td align="center" style="padding: 40px 40px 0px 40px;">
-                            <a href="{{appLink}}"
-                              target="_blank">
-                              <img
-                                src="{{appIcon}}"
-                                width="70" border="0" style="vertical-align: middle;" />
-                            </a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td align="center"
-                            style="font-size: 18px; color: #0e0e0f; font-weight: 700; font-family: 'Rubik',sans-serif; line-height: 28px; vertical-align: top; text-align: center; padding: 35px 40px 0px 40px;">
-                            <strong>Your Order Receipt</strong>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td align="center" bgcolor="#ffffff" height="1" style="padding: 40px 40px 5px;"
-                            valign="top" width="100%">
-                            <table cellpadding="0" cellspacing="0" width="100%">
-                              <tbody>
-                                <tr>
-                                  <td style="border-top: 1px solid #e4e4e4;"></td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td
-                            style="font: 16px/22px 'Helvetica Neue', Arial, 'sans-serif'; text-align: left; color: #555555; padding: 40px 40px 0 40px;">
-                            <p>Hi {{customerUsername}},</p>
-                            <p>Congrats!</p>
-                            <p>
-                              You've accomplished something today. Here's your<br />
-                              receipt:
-                            </p>
-
-                            <table align="center" style="color: #555; margin: 0; width: 100%;">
-                              <tbody>
-                                <tr>
-                                  <td style="color: #555;">
-                                    <table cellspacing="0" cellpadding="8"
-                                      style="font: 16px/22px 'Helvetica Neue', Arial, 'sans-serif'; border: 0; width: 100%; border-collapse: collapse; background-color: #f2f2f2;">
-                                      <tbody>
-                                        <tr>
-                                          <td
-                                            style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; text-align: left;">
-                                            Item</td>
-                                          <td
-                                            style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; width: 20%;">
-                                            Qty</td>
-                                          <td
-                                            style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; width: 40px; text-align: right;">
-                                            Price</td>
-                                        </tr>
-
-                                        <tr>
-                                          <td
-                                            style="color: #555555; font-weight: bold; text-align: left; border-right: 1px solid #ffffff; border-bottom: 1px solid #ffffff;">
-                                            {{title}} - <span
-                                              style="font-weight: normal;">{{description}}</span>
-                                          </td>
-                                          <td
-                                            style="color: #555; border-right: 1px solid #fff; border-bottom: 1px solid #fff;">
-                                            × 1</td>
-                                          <td
-                                            style="text-align: right; color: #555; border-bottom: 1px solid #fff;">
-                                            ${{amount}}</td>
-                                        </tr>
-
-                                        <tr style="border-top: 1px solid #fff;">
-                                          <td style="color: #555; text-align: left;" colspan="2">Service Fee</td>
-                                          <td style="text-align: right; color: #555;">${{serviceFee}}</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-
-                                    <div
-                                      style="text-align: right; padding: 10px 8px 10px 0px; color: #000; font-weight: bold; background-color: #f2f2f2; border-top: 1px solid #fff;">
-                                      Total: ${{total}}
-                                    </div>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-
-                            <p>
-                              You can contact the seller if you have more information.
-                            </p>
-
-                            <p>
-                              Thanks,<br />
-                              The Service Hub Team
-                            </p>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <table width="100%" border="0" cellspacing="0" cellpadding="0"
-                              style="margin: 30px 0px;">
-                              <tbody>
-                                <tr>
-                                  <td align="center" style="text-align: center;">
-                                    <a style="
-                                      color: #ffffff;
-                                      background-color: #4aa1f3;
-                                      display: inline-block;
-                                      font-family: 'Rubik',sans-serif;
-                                      font-size: 16px;
-                                      line-height: 30px;
-                                      text-align: center;
-                                      font-weight: bold;
-                                      text-decoration: none;
-                                      padding: 5px 20px;
-                                      border-radius: 3px;
-                                      text-transform: none;"
-                                      href="{{orderUrl}}"
-                                      target="_blank">
-                                      View Your Order
-                                    </a>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <strong>{{title}}</strong><br>
+                    <span>{{description}}</span>
                   </td>
+                  <td>× 1</td>
+                  <td class="price-column">${{amount}}</td>
                 </tr>
-
                 <tr>
-                  <td width="100%" align="center" valign="top" bgcolor="#ffffff" height="45"></td>
+                  <td colspan="2">Service Fee</td>
+                  <td class="price-column">${{serviceFee}}</td>
                 </tr>
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-row">
+                    Total: ${{total}}
+                  </td>
+                </tr>
+              </tfoot>
             </table>
-          </td>
-        </tr>
-        <tr >
-          <td style="height:80px;" bgcolor="#eeeeee">&nbsp;</td>
-        </tr>
-        <tr>
-          <td style="text-align:center;" bgcolor="#eeeeee">
-            <p style="font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0; font-family: 'Rubik',sans-serif;">&copy; Service Hub</p>
-          </td>
-        </tr>
-        <tr >
-          <td style="height:80px;" bgcolor="#eeeeee">&nbsp;</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</body>
+
+            <p>You can contact the seller if you need more information.</p>
+
+            <div class="signature">
+              Thanks,<br>
+              The Service Hub Team
+            </div>
+          </div>
+          <a href="{{orderUrl}}" class="action-button" target="_blank" rel="noopener noreferrer">
+            View Your Order
+          </a>
+        </div>
+        <div class="footer">
+          <p class="footer-text">&copy; Service Hub</p>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

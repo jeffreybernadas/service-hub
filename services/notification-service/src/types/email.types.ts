@@ -12,6 +12,7 @@ export interface IVerifyEmailTemplateData extends IEmailLocals {
  */
 export interface IPasswordResetTemplateData extends IEmailLocals {
   url: string;
+  username: string;
 }
 
 /**

@@ -68,6 +68,7 @@ export const consumerAuthEmail = async (
             url: resetLink,
             appIcon,
             appLink,
+            username,
           };
           await sendMail({
             to: receiverEmail,
