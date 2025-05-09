@@ -6,7 +6,11 @@ import { CLIENT_URL } from "@notifications/constants/env.constants";
 import {
   getOrderPlacedTemplate,
   getOrderReceiptTemplate,
-  getGenericTemplate
+  getGenericTemplate,
+  getOrderDeliveredTemplate,
+  getOrderExtensionTemplate,
+  getOrderExtensionApprovalTemplate,
+  getCustomOfferTemplate,
 } from "@notifications/utils/emailTemplates.util";
 import { log } from "@notifications/utils/logger.util";
 import { sendMail } from "@notifications/utils/sendMail.util";
@@ -15,7 +19,11 @@ import {
   IOrderPlacedTemplateData,
   IOrderReceiptTemplateData,
   IGenericEmailTemplateData,
-  IAuthEmailTemplates
+  IAuthEmailTemplates,
+  IOrderDeliveredTemplateData,
+  IOrderExtensionTemplateData,
+  IOrderExtensionApprovalTemplateData,
+  ICustomOfferTemplateData,
 } from "@notifications/types/email.types";
 import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
 
@@ -61,57 +69,71 @@ export const consumerOrderEmail = async (
           header,
           message,
           serviceFee,
-          total
+          total,
+          originalDate,
+          newDate,
+          reason,
+          type,
+          deliveryDays,
+          offerLink,
         }: {
           receiverEmail: string;
           template: IAuthEmailTemplates;
-          amount: IEmailLocals['amount'];
-          customerUsername: IEmailLocals['customerUsername'];
-          contractorUsername: IEmailLocals['contractorUsername'];
-          title: IEmailLocals['title'];
-          description: IEmailLocals['description'];
-          orderId: IEmailLocals['orderId'];
-          orderDue: IEmailLocals['orderDue'];
-          requirements: IEmailLocals['requirements'];
-          orderUrl: IEmailLocals['orderUrl'];
-          subject: IEmailLocals['subject'];
-          header: IEmailLocals['header'];
-          message: IEmailLocals['message'];
-          serviceFee: IEmailLocals['serviceFee'];
-          total: IEmailLocals['total'];
+          amount: IEmailLocals["amount"];
+          customerUsername: IEmailLocals["customerUsername"];
+          contractorUsername: IEmailLocals["contractorUsername"];
+          title: IEmailLocals["title"];
+          description: IEmailLocals["description"];
+          orderId: IEmailLocals["orderId"];
+          orderDue: IEmailLocals["orderDue"];
+          requirements: IEmailLocals["requirements"];
+          orderUrl: IEmailLocals["orderUrl"];
+          subject: IEmailLocals["subject"];
+          header: IEmailLocals["header"];
+          message: IEmailLocals["message"];
+          serviceFee: IEmailLocals["serviceFee"];
+          total: IEmailLocals["total"];
+          originalDate: IEmailLocals["originalDate"];
+          newDate: IEmailLocals["newDate"];
+          reason: IEmailLocals["reason"];
+          type: IEmailLocals["type"];
+          deliveryDays: IEmailLocals["deliveryDays"];
+          offerLink: IEmailLocals["offerLink"];
         } = JSON.parse(msg!.content.toString());
         // Common data for all templates
+        const appIcon =
+          "https://bigbusinessagency.com/hubfs/Product_Logo_Lockups_RGB_Logo_Centered_Service_Hub.webp";
         const baseTemplateData = {
           appLink: CLIENT_URL,
-          appIcon: "https://i.ibb.co/Kyp2m0t/cover.png",
+          appIcon,
         };
 
         if (template === "order-placed") {
           // Create order placed template data
           const orderPlacedData: IOrderPlacedTemplateData = {
             ...baseTemplateData,
-            customerUsername: customerUsername ?? '',
-            contractorUsername: contractorUsername ?? '',
-            orderId: orderId ?? '',
-            orderDue: orderDue ?? '',
-            title: title ?? '',
-            description: description ?? '',
-            amount: amount ?? '0',
-            requirements: requirements ?? '',
+            customerUsername: customerUsername ?? "",
+            contractorUsername: contractorUsername ?? "",
+            orderId: orderId ?? "",
+            orderDue: orderDue ?? "",
+            title: title ?? "",
+            description: description ?? "",
+            amount: amount ?? "0",
+            requirements: requirements ?? "",
             orderUrl: orderUrl ?? CLIENT_URL,
           };
 
           // Create order receipt template data
           const orderReceiptData: IOrderReceiptTemplateData = {
             ...baseTemplateData,
-            customerUsername: customerUsername ?? '',
-            title: title ?? '',
-            description: description ?? '',
-            amount: amount ?? '0',
-            serviceFee: serviceFee ?? '0',
-            total: total ?? '0',
+            customerUsername: customerUsername ?? "",
+            title: title ?? "",
+            description: description ?? "",
+            amount: amount ?? "0",
+            serviceFee: serviceFee ?? "0",
+            total: total ?? "0",
             orderUrl: orderUrl ?? CLIENT_URL,
-            orderId: orderId ?? '',
+            orderId: orderId ?? "",
           };
 
           await sendMail({
@@ -123,11 +145,70 @@ export const consumerOrderEmail = async (
             to: receiverEmail,
             ...getOrderReceiptTemplate(orderReceiptData),
           });
+        } else if (template === "order-delivered") {
+          const orderDeliveredData: IOrderDeliveredTemplateData = {
+            ...baseTemplateData,
+            customerUsername: customerUsername ?? "",
+            title: title ?? "",
+            contractorUsername: contractorUsername ?? "",
+            orderUrl: orderUrl ?? CLIENT_URL,
+          };
+
+          await sendMail({
+            to: receiverEmail,
+            ...getOrderDeliveredTemplate(orderDeliveredData),
+          });
+        } else if (template === "order-extension") {
+          const orderExtensionData: IOrderExtensionTemplateData = {
+            ...baseTemplateData,
+            customerUsername: customerUsername ?? "",
+            contractorUsername: contractorUsername ?? "",
+            originalDate: originalDate ?? "",
+            newDate: newDate ?? "",
+            reason: reason ?? "",
+            orderUrl: orderUrl ?? CLIENT_URL,
+          };
+
+          await sendMail({
+            to: receiverEmail,
+            ...getOrderExtensionTemplate(orderExtensionData),
+          });
+        } else if (template === "order-extension-approval") {
+          const orderExtensionApprovalData: IOrderExtensionApprovalTemplateData =
+            {
+              ...baseTemplateData,
+              customerUsername: customerUsername ?? "",
+              contractorUsername: contractorUsername ?? "",
+              type: type ?? "",
+              message: message ?? "",
+              orderUrl: orderUrl ?? CLIENT_URL,
+            };
+
+          await sendMail({
+            to: receiverEmail,
+            ...getOrderExtensionApprovalTemplate(orderExtensionApprovalData),
+          });
+        } else if (template === "custom-offer") {
+          const customOfferData: ICustomOfferTemplateData = {
+            ...baseTemplateData,
+            customerUsername: customerUsername ?? "",
+            contractorUsername: contractorUsername ?? "",
+            title: title ?? "",
+            description: description ?? "",
+            deliveryDays: deliveryDays ?? "0",
+            amount: amount ?? "0",
+            offerLink: offerLink ?? CLIENT_URL,
+          };
+
+          await sendMail({
+            to: receiverEmail,
+            ...getCustomOfferTemplate(customOfferData),
+          });
         } else {
           const genericData: IGenericEmailTemplateData = {
             ...baseTemplateData,
-            header: header ?? 'Notification',
-            message: message ?? '',
+            header: header ?? "Notification",
+            message: message ?? "",
             subject,
             orderUrl,
           };

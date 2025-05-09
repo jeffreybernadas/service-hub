@@ -7,11 +7,13 @@ import { CLIENT_URL } from "@notifications/constants/env.constants";
 import {
   IAuthEmailTemplates,
   IOTPVerificationTemplateData,
+  IPasswordResetSuccessTemplateData,
   IPasswordResetTemplateData,
   IVerifyEmailTemplateData,
 } from "@notifications/types/email.types";
 import {
   getOTPVerificationTemplate,
+  getPasswordResetSuccessTemplate,
   getPasswordResetTemplate,
   getVerifyEmailTemplate,
 } from "@notifications/utils/emailTemplates.util";
@@ -50,8 +52,6 @@ export const consumerAuthEmail = async (
           resetLink,
           verifyLink,
           template,
-          appIcon,
-          appLink,
           otp,
           username,
         }: {
@@ -59,17 +59,21 @@ export const consumerAuthEmail = async (
           receiverEmail: string;
           resetLink: IEmailLocals["resetLink"];
           verifyLink: IEmailLocals["verifyLink"];
-          appIcon: IEmailLocals["appIcon"];
-          appLink: IEmailLocals["appLink"];
           otp: IEmailLocals["otp"];
           username: IEmailLocals["username"];
         } = JSON.parse(msg!.content.toString());
 
+        // Common data for all templates
+        const appIcon = "https://bigbusinessagency.com/hubfs/Product_Logo_Lockups_RGB_Logo_Centered_Service_Hub.webp";
+        const baseTemplateData = {
+          appLink: CLIENT_URL,
+          appIcon,
+        };
+
         if (template === "verify-email") {
           const templateData: IVerifyEmailTemplateData = {
+            ...baseTemplateData,
             url: verifyLink ?? CLIENT_URL,
-            appIcon,
-            appLink,
           };
           await sendMail({
             to: receiverEmail,
@@ -77,9 +81,8 @@ export const consumerAuthEmail = async (
           });
         } else if (template === "password-reset") {
           const templateData: IPasswordResetTemplateData = {
+            ...baseTemplateData,
             url: resetLink ?? CLIENT_URL,
-            appIcon,
-            appLink,
             username: username ?? "",
           };
           await sendMail({
@@ -88,14 +91,22 @@ export const consumerAuthEmail = async (
           });
         } else if (template === "otp-verification") {
           const templateData: IOTPVerificationTemplateData = {
+            ...baseTemplateData,
             otp: otp ?? "",
-            appIcon,
-            appLink,
             username: username ?? "",
           };
           await sendMail({
             to: receiverEmail,
             ...getOTPVerificationTemplate(templateData),
+          });
+        } else if (template === "password-reset-success") {
+          const templateData: IPasswordResetSuccessTemplateData = {
+            ...baseTemplateData,
+            username: username ?? "",
+          };
+          await sendMail({
+            to: receiverEmail,
+            ...getPasswordResetSuccessTemplate(templateData),
           });
         }
         channel?.ack(msg!);
