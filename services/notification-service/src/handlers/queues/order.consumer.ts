@@ -116,8 +116,8 @@ export const consumerOrderEmail = async (
             contractorUsername: contractorUsername ?? "",
             orderId: orderId ?? "",
             orderDue: orderDue ?? "",
-            title: title ?? "",
-            description: description ?? "",
+            title: title ?? "This service has no title",
+            description: description ?? "This service has no description",
             amount: amount ?? "0",
             requirements: requirements ?? "",
             orderUrl: orderUrl ?? CLIENT_URL,
@@ -127,11 +127,11 @@ export const consumerOrderEmail = async (
           const orderReceiptData: IOrderReceiptTemplateData = {
             ...baseTemplateData,
             customerUsername: customerUsername ?? "",
-            title: title ?? "",
-            description: description ?? "",
+            title: title ?? "This service has no title",
+            description: description ?? "This service has no description",
             amount: amount ?? "0",
-            serviceFee: serviceFee ?? "0",
-            total: total ?? "0",
+            serviceFee: serviceFee ?? "10",
+            total: total ?? (Number(amount) + Number(serviceFee)).toString(),
             orderUrl: orderUrl ?? CLIENT_URL,
             orderId: orderId ?? "",
           };
@@ -149,7 +149,7 @@ export const consumerOrderEmail = async (
           const orderDeliveredData: IOrderDeliveredTemplateData = {
             ...baseTemplateData,
             customerUsername: customerUsername ?? "",
-            title: title ?? "",
+            title: title ?? "This service has no title",
             contractorUsername: contractorUsername ?? "",
             orderUrl: orderUrl ?? CLIENT_URL,
           };
