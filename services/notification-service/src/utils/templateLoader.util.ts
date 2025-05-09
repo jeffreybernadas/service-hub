@@ -8,9 +8,9 @@ import { log } from "./logger.util";
  * @param replacements An object with key-value pairs for replacements
  * @returns The processed HTML string
  */
-export const loadTemplate = (
+export const loadTemplate = <T extends Record<string, unknown>>(
   templateName: string,
-  replacements: Record<string, string>
+  replacements: T
 ): string => {
   try {
     // Construct the template path
@@ -27,8 +27,11 @@ export const loadTemplate = (
 
     // Replace all placeholders with their values
     Object.entries(replacements).forEach(([key, value]) => {
-      const placeholder = new RegExp(`{{${key}}}`, "g");
-      templateContent = templateContent.replace(placeholder, value);
+      if (value !== undefined && value !== null) {
+        const placeholder = new RegExp(`{{${key}}}`, "g");
+        const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+        templateContent = templateContent.replace(placeholder, stringValue);
+      }
     });
 
     return templateContent;
