@@ -2,7 +2,8 @@ import {
   AmqpChannel,
   createConnection,
 } from "@notifications/configs/rabbitmq.config";
-import { getVerifyEmailTemplate } from "@notifications/utils/emailTemplates.util";
+import { IOTPVerificationTemplateData, IPasswordResetTemplateData, IVerifyEmailTemplateData } from "@notifications/types/email.types";
+import { getOTPVerificationTemplate, getPasswordResetTemplate, getVerifyEmailTemplate } from "@notifications/utils/emailTemplates.util";
 import { log } from "@notifications/utils/logger.util";
 import { sendMail } from "@notifications/utils/sendMail.util";
 import { ConsumeMessage } from "amqplib";
@@ -33,13 +34,40 @@ export const consumerAuthEmail = async (
     channel.consume(
       serviceHubQueue.queue,
       async (msg: ConsumeMessage | null) => {
-        const { receiverEmail, verifyLink } = JSON.parse(
-          msg!.content.toString(),
-        );
-        await sendMail({
-          to: receiverEmail,
-          ...getVerifyEmailTemplate(verifyLink),
-        });
+        const { receiverEmail, resetLink, verifyLink, template, appIcon, appLink, otp } =
+          JSON.parse(msg!.content.toString());
+
+        if (template === "verify-email") {
+          const templateData: IVerifyEmailTemplateData = {
+            url: verifyLink,
+            appIcon,
+            appLink,
+          };
+          await sendMail({
+            to: receiverEmail,
+            ...getVerifyEmailTemplate(templateData),
+          });
+        } else if (template === "password-reset") {
+          const templateData: IPasswordResetTemplateData = {
+            url: resetLink,
+            appIcon,
+            appLink,
+          };
+          await sendMail({
+            to: receiverEmail,
+            ...getPasswordResetTemplate(templateData),
+          });
+        } else if (template === "otp-verification") {
+          const templateData: IOTPVerificationTemplateData = {
+            otp,
+            appIcon,
+            appLink,
+          };
+          await sendMail({
+            to: receiverEmail,
+            ...getOTPVerificationTemplate(templateData),
+          });
+        }
         channel?.ack(msg!);
       },
     );

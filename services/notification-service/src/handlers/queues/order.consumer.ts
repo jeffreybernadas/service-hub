@@ -12,9 +12,9 @@ import { log } from "@notifications/utils/logger.util";
 import { sendMail } from "@notifications/utils/sendMail.util";
 import { ConsumeMessage } from "amqplib";
 import {
-  OrderPlacedTemplateData,
-  OrderReceiptTemplateData,
-  GenericEmailTemplateData
+  IOrderPlacedTemplateData,
+  IOrderReceiptTemplateData,
+  IGenericEmailTemplateData
 } from "@notifications/types/email.types";
 
 export const consumerOrderEmail = async (
@@ -69,7 +69,7 @@ export const consumerOrderEmail = async (
 
         if (template === "order-placed") {
           // Create order placed template data
-          const orderPlacedData: OrderPlacedTemplateData = {
+          const orderPlacedData: IOrderPlacedTemplateData = {
             ...baseTemplateData,
             customerUsername: customerUsername ?? '',
             contractorUsername: contractorUsername ?? '',
@@ -83,7 +83,7 @@ export const consumerOrderEmail = async (
           };
 
           // Create order receipt template data
-          const orderReceiptData: OrderReceiptTemplateData = {
+          const orderReceiptData: IOrderReceiptTemplateData = {
             ...baseTemplateData,
             customerUsername: customerUsername ?? '',
             title: title ?? '',
@@ -105,7 +105,7 @@ export const consumerOrderEmail = async (
             ...getOrderReceiptTemplate(orderReceiptData),
           });
         } else {
-          const genericData: GenericEmailTemplateData = {
+          const genericData: IGenericEmailTemplateData = {
             ...baseTemplateData,
             header: header ?? 'Notification',
             message: message ?? '',
