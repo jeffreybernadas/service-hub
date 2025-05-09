@@ -85,6 +85,40 @@ export interface ICustomOfferTemplateData extends IEmailLocals {
   offerLink: string;
   amount: string;
 }
+
+/**
+ * Interface for order delivered email template data
+ */
+export interface IOrderDeliveredTemplateData extends IEmailLocals {
+  customerUsername: string;
+  title: string;
+  contractorUsername: string;
+  orderUrl: string;
+}
+
+/**
+ * Interface for order extension request email template data
+ */
+export interface IOrderExtensionTemplateData extends IEmailLocals {
+  customerUsername: string;
+  contractorUsername: string;
+  originalDate: string;
+  newDate: string;
+  reason: string;
+  orderUrl: string;
+}
+
+/**
+ * Interface for order extension approval email template data
+ */
+export interface IOrderExtensionApprovalTemplateData extends IEmailLocals {
+  customerUsername: string;
+  contractorUsername: string;
+  type: string;
+  message: string;
+  orderUrl: string;
+}
+
 /**
  * Interface for generic email template data
  */

@@ -8,6 +8,9 @@ import {
   IOTPVerificationTemplateData,
   IPasswordResetSuccessTemplateData,
   ICustomOfferTemplateData,
+  IOrderDeliveredTemplateData,
+  IOrderExtensionApprovalTemplateData,
+  IOrderExtensionTemplateData,
 } from "@notifications/types/email.types";
 
 /**
@@ -90,6 +93,44 @@ export const getOrderReceiptTemplate = (data: IOrderReceiptTemplateData) => ({
   text: `Thank you for your order. Here's your receipt for order #${data.orderId}.`,
   html: loadTemplate("order-receipt", { data }),
 });
+
+/**
+ * Returns the order delivered email template
+ * @param data The order delivered template data
+ * @returns Email template object with subject, text, and HTML content
+ */
+export const getOrderDeliveredTemplate = (
+  data: IOrderDeliveredTemplateData,
+) => ({
+  subject: "Your Order is Delivered",
+  text: `Your order #${data.orderId} has been delivered. Please review the order.`,
+  html: loadTemplate("order-delivered", { data }),
+});
+
+/**
+ * Returns the order extension email template
+ * @param data The order extension template data
+ * @returns Email template object with subject, text, and HTML content
+ */
+export const getOrderExtensionTemplate = (data: IOrderExtensionTemplateData) => ({
+  subject: "Order Extension Request",
+  text: `The contractor ${data.contractorUsername} has requested an extension for your order #${data.orderId}.`,
+  html: loadTemplate("order-extension", { data }),
+});
+
+/**
+ * Returns the order extension approval email template
+ * @param data The order extension approval template data
+ * @returns Email template object with subject, text, and HTML content
+ */
+export const getOrderExtensionApprovalTemplate = (
+  data: IOrderExtensionApprovalTemplateData,
+) => ({
+  subject: "Order Extension Approval",
+  text: `The customer ${data.customerUsername} has ${data.type} your order extension request for order #${data.orderId}.`,
+  html: loadTemplate("order-extension-approval", { data }),
+});
+
 
 /**
  * Returns a generic email template
