@@ -5,8 +5,15 @@ import express from "express";
 import cors from "cors";
 import { errorHandler } from "@jeffreybernadas/service-hub-helper";
 import healthCheckHandler from "@notifications/routes/health.route";
-import { APP_ORIGIN, PORT, SERVICE_NAME } from "@notifications/constants/env.constants";
-import { API_PREFIX, API_VERSION } from "@notifications/constants/version.constant";
+import {
+  APP_ORIGIN,
+  PORT,
+  SERVICE_NAME,
+} from "@notifications/constants/env.constants";
+import {
+  API_PREFIX,
+  API_VERSION,
+} from "@notifications/constants/version.constant";
 import { checkConnection } from "@notifications/utils/elasticsearch.util";
 import { log } from "@notifications/utils/logger.util";
 import enhancedResponse from "@notifications/middleware/enhancedResponse.middleware";
@@ -38,7 +45,9 @@ const startServer = async () => {
   initializeApm();
 
   app.listen(PORT, () => {
-    log.info(`Notification Service (${API_VERSION}) is running on port ${PORT}.`);
+    log.info(
+      `Notification Service (${API_VERSION}) is running on port ${PORT}.`,
+    );
   });
 };
 

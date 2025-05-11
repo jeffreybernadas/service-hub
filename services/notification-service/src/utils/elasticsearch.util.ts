@@ -1,8 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
 import { ClusterHealthResponse } from "@elastic/elasticsearch/lib/api/types";
-import {
-  ELASTIC_SEARCH_URL,
-} from "@notifications/constants/env.constants";
+import { ELASTIC_SEARCH_URL } from "@notifications/constants/env.constants";
 import { log } from "@notifications/utils/logger.util";
 
 const elasticSearchClient = new Client({

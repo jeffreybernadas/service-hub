@@ -64,7 +64,8 @@ export const consumerAuthEmail = async (
         } = JSON.parse(msg!.content.toString());
 
         // Common data for all templates
-        const appIcon = "https://bigbusinessagency.com/hubfs/Product_Logo_Lockups_RGB_Logo_Centered_Service_Hub.webp";
+        const appIcon =
+          "https://bigbusinessagency.com/hubfs/Product_Logo_Lockups_RGB_Logo_Centered_Service_Hub.webp";
         const baseTemplateData = {
           appLink: CLIENT_URL,
           appIcon,

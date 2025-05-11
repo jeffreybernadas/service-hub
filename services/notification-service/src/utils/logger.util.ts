@@ -1,5 +1,8 @@
 import { winstonLogger } from "@jeffreybernadas/service-hub-helper";
-import { ELASTIC_SEARCH_URL, SERVICE_NAME } from "@notifications/constants/env.constants";
+import {
+  ELASTIC_SEARCH_URL,
+  SERVICE_NAME,
+} from "@notifications/constants/env.constants";
 import { Logger } from "winston";
 
 /**

@@ -11,12 +11,13 @@ module.exports = {
   },
   modulePathIgnorePatterns: ["<rootDir>/src/__tests__/helpers/*"],
   collectCoverageFrom: ["src/**/*.ts"],
-  testRegex: "(/__tests__/(?!setup).*(\\.|/)(unit|integration|acceptance|test))\\.ts?$",
+  testRegex:
+    "(/__tests__/(?!setup).*(\\.|/)(unit|integration|acceptance|test))\\.ts?$",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/src/__tests__/",
-    "/src/__mocks__/"
+    "/src/__mocks__/",
   ],
   moduleNameMapper: {
     "@notifications/(.*)": ["<rootDir>/src/$1"],

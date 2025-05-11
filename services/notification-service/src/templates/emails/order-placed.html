@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-US">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Order Placed Email Template">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Order Placed Email Template" />
     <title>Order Placed Email Template</title>
     <style>
       body {
         margin: 0;
         padding: 0;
         background-color: #f2f3f8;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Open Sans", sans-serif;
         min-height: 100vh;
       }
       .container {
@@ -28,7 +28,7 @@
         border-radius: 3px;
         padding: 40px;
         text-align: center;
-        box-shadow: 0 6px 18px 0 rgba(0,0,0,.06);
+        box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.06);
       }
       .app-icon {
         width: 70px;
@@ -41,7 +41,7 @@
         font-weight: 500;
         margin: 0;
         font-size: 32px;
-        font-family: 'Rubik', sans-serif;
+        font-family: "Rubik", sans-serif;
       }
       .divider {
         display: inline-block;
@@ -62,7 +62,7 @@
         margin: 30px 0;
         border-collapse: collapse;
         color: #455056;
-        font-family: 'Rubik', sans-serif;
+        font-family: "Rubik", sans-serif;
         background-color: #f2f2f2;
       }
       .order-table th {
@@ -139,15 +139,22 @@
       <div class="email-container">
         <div class="content-wrapper">
           <a href="{{appLink}}" target="_blank" rel="noopener noreferrer">
-            <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon">
+            <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon" />
           </a>
           <h1 class="title">New Order Received</h1>
           <div class="divider"></div>
           <div class="description">
             <p>Hi {{contractorUsername}},</p>
             <p>
-              You have received a new order from {{customerUsername}}.<br>
-              Order <a href="{{orderUrl}}" class="order-link" target="_blank" rel="noopener noreferrer">#{{orderId}}</a>
+              You have received a new order from {{customerUsername}}.<br />
+              Order
+              <a
+                href="{{orderUrl}}"
+                class="order-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                >#{{orderId}}</a
+              >
               is due <strong>{{orderDue}}</strong>.
             </p>
 
@@ -162,7 +169,7 @@
               <tbody>
                 <tr>
                   <td>
-                    <strong>{{title}}</strong><br>
+                    <strong>{{title}}</strong><br />
                     <span>{{description}}</span>
                   </td>
                   <td>× 1</td>
@@ -171,19 +178,26 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="3" class="total-row">
-                    Total: ${{amount}}
-                  </td>
+                  <td colspan="3" class="total-row">Total: ${{amount}}</td>
                 </tr>
               </tfoot>
             </table>
 
-            <p class="requirements-title">The buyer has provided the following order requirements:</p>
+            <p class="requirements-title">
+              The buyer has provided the following order requirements:
+            </p>
             <p class="description">{{requirements}}</p>
 
-            <p style="text-align: center; margin-top: 40px;">Got everything you need?</p>
+            <p style="text-align: center; margin-top: 40px">
+              Got everything you need?
+            </p>
           </div>
-          <a href="{{orderUrl}}" class="action-button" target="_blank" rel="noopener noreferrer">
+          <a
+            href="{{orderUrl}}"
+            class="action-button"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             View Order
           </a>
         </div>

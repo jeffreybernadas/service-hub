@@ -15,7 +15,7 @@ describe("Template Loader Utility", () => {
 
     // Mock fs.readFileSync to return a template with placeholders
     (fs.readFileSync as jest.Mock).mockReturnValue(
-      "<!DOCTYPE html><html><body><h1>Hello {{name}}</h1><p>Click <a href='{{url}}'>here</a></p></body></html>"
+      "<!DOCTYPE html><html><body><h1>Hello {{name}}</h1><p>Click <a href='{{url}}'>here</a></p></body></html>",
     );
   });
 
@@ -28,7 +28,10 @@ describe("Template Loader Utility", () => {
     });
 
     // Verify the template was loaded
-    expect(fs.readFileSync).toHaveBeenCalledWith("/mocked/path/to/template.html", "utf-8");
+    expect(fs.readFileSync).toHaveBeenCalledWith(
+      "/mocked/path/to/template.html",
+      "utf-8",
+    );
 
     // Verify placeholders were replaced
     expect(result).toContain("<h1>Hello John</h1>");

@@ -29,9 +29,8 @@ export const loadTemplate = <T extends object>(
     Object.entries(replacements.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         const placeholder = new RegExp(`{{${key}}}`, "g");
-        const stringValue = typeof value === "object"
-          ? JSON.stringify(value)
-          : String(value);
+        const stringValue =
+          typeof value === "object" ? JSON.stringify(value) : String(value);
         templateContent = templateContent.replace(placeholder, stringValue);
       }
     });

@@ -112,7 +112,9 @@ export const getOrderDeliveredTemplate = (
  * @param data The order extension template data
  * @returns Email template object with subject, text, and HTML content
  */
-export const getOrderExtensionTemplate = (data: IOrderExtensionTemplateData) => ({
+export const getOrderExtensionTemplate = (
+  data: IOrderExtensionTemplateData,
+) => ({
   subject: "Order Extension Request",
   text: `The contractor ${data.contractorUsername} has requested an extension for your order #${data.orderId}.`,
   html: loadTemplate("order-extension", { data }),
@@ -130,7 +132,6 @@ export const getOrderExtensionApprovalTemplate = (
   text: `The customer ${data.customerUsername} has ${data.type} your order extension request for order #${data.orderId}.`,
   html: loadTemplate("order-extension-approval", { data }),
 });
-
 
 /**
  * Returns a generic email template
