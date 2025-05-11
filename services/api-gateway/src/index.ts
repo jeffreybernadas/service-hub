@@ -2,7 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { errorHandler } from "@jeffreybernadas/service-hub-helper";
-import { APP_ORIGIN, PORT, SERVICE_NAME } from "@gateway/constants/env.constants";
+import {
+  APP_ORIGIN,
+  PORT,
+  SERVICE_NAME,
+} from "@gateway/constants/env.constants";
 import { API_VERSION, API_PREFIX } from "@gateway/constants/version.constants";
 import { log } from "@gateway/utils/logger.util";
 import healthCheckHandler from "@gateway/routes/health.route";
@@ -28,9 +32,7 @@ const startServer = async () => {
   initializeApm();
 
   app.listen(PORT, () => {
-    log.info(
-      `API Gateway (${API_VERSION}) is running on port ${PORT}.`,
-    );
+    log.info(`API Gateway (${API_VERSION}) is running on port ${PORT}.`);
   });
 };
 
