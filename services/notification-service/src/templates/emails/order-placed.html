@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Order Placed Email Template" />
+    <title>Order Placed Email Template</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f3f8;
+        font-family: "Open Sans", sans-serif;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 670px;
+        margin: 0 auto;
+        padding: 80px 20px;
+      }
+      .email-container {
+        width: 100%;
+        max-width: 670px;
+        margin: 0 auto;
+      }
+      .content-wrapper {
+        background: #fff;
+        border-radius: 3px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.06);
+      }
+      .app-icon {
+        width: 70px;
+        vertical-align: middle;
+        border: 0;
+        margin-bottom: 20px;
+      }
+      .title {
+        color: #1e1e2d;
+        font-weight: 500;
+        margin: 0;
+        font-size: 32px;
+        font-family: "Rubik", sans-serif;
+      }
+      .divider {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 29px 0 26px;
+        border-bottom: 1px solid #cecece;
+        width: 100px;
+      }
+      .description {
+        color: #455056;
+        font-size: 15px;
+        line-height: 24px;
+        margin: 0;
+        text-align: left;
+      }
+      .order-table {
+        width: 100%;
+        margin: 30px 0;
+        border-collapse: collapse;
+        color: #455056;
+        font-family: "Rubik", sans-serif;
+        background-color: #f2f2f2;
+      }
+      .order-table th {
+        color: #1e1e2d;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #fff;
+      }
+      .order-table td {
+        padding: 12px;
+        border-bottom: 1px solid #fff;
+        border-right: 1px solid #fff;
+      }
+      .order-table td:last-child {
+        border-right: none;
+      }
+      .order-table .price-column {
+        text-align: right;
+        width: 40px;
+      }
+      .order-table .qty-column {
+        width: 20%;
+      }
+      .total-row {
+        text-align: right;
+        padding: 15px 12px;
+        color: #1e1e2d;
+        font-weight: 700;
+        font-size: 16px;
+        background-color: #f2f2f2;
+        border-top: 1px solid #fff;
+      }
+      .requirements-title {
+        color: #1e1e2d;
+        font-weight: 700;
+        margin: 30px 0 10px;
+      }
+      .action-button {
+        background: #4aa1f3;
+        color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 24px;
+        border-radius: 50px;
+        display: inline-block;
+        margin: 24px auto 0;
+      }
+      .action-button:hover {
+        text-decoration: underline;
+      }
+      .order-link {
+        color: #4aa1f3;
+        text-decoration: none;
+      }
+      .order-link:hover {
+        text-decoration: underline;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .footer-text {
+        font-size: 14px;
+        color: rgba(69, 80, 86, 0.74);
+        line-height: 18px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="email-container">
+        <div class="content-wrapper">
+          <a href="{{appLink}}" target="_blank" rel="noopener noreferrer">
+            <img src="{{appIcon}}" alt="Service Hub Logo" class="app-icon" />
+          </a>
+          <h1 class="title">New Order Received</h1>
+          <div class="divider"></div>
+          <div class="description">
+            <p>Hi {{contractorUsername}},</p>
+            <p>
+              You have received a new order from {{customerUsername}}.<br />
+              Order
+              <a
+                href="{{orderUrl}}"
+                class="order-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                >#{{orderId}}</a
+              >
+              is due <strong>{{orderDue}}</strong>.
+            </p>
+
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="qty-column">Qty</th>
+                  <th class="price-column">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>{{title}}</strong><br />
+                    <span>{{description}}</span>
+                  </td>
+                  <td>× 1</td>
+                  <td class="price-column">${{amount}}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-row">Total: ${{amount}}</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <p class="requirements-title">
+              The buyer has provided the following order requirements:
+            </p>
+            <p class="description">{{requirements}}</p>
+
+            <p style="text-align: center; margin-top: 40px">
+              Got everything you need?
+            </p>
+          </div>
+          <a
+            href="{{orderUrl}}"
+            class="action-button"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Order
+          </a>
+        </div>
+        <div class="footer">
+          <p class="footer-text">&copy; Service Hub</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
