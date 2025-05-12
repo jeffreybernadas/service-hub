@@ -1,13 +1,9 @@
-import { Request, Response } from "express";
-import { catchErrors } from "@jeffreybernadas/service-hub-helper";
-import { log } from "@gateway/utils/logger.util";
+import { Router } from "express";
+import healthCheckHandler from "@gateway/controller/health.controller";
 
-const healthCheckHandler = catchErrors(async (_req: Request, res: Response) => {
-  log.info("Health check endpoint called");
+const healthCheckRouter = Router();
 
-  res.status(200).json({
-    status: "API Gateway is healthy.",
-  });
-});
+healthCheckRouter.get("/", healthCheckHandler);
 
-export default healthCheckHandler;
+export default healthCheckRouter;
+

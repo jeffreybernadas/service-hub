@@ -9,7 +9,7 @@ import {
 } from "@gateway/constants/env.constants";
 import { API_VERSION, API_PREFIX } from "@gateway/constants/version.constants";
 import { log } from "@gateway/utils/logger.util";
-import healthCheckHandler from "@gateway/routes/health.route";
+import healthCheckRouter from "@gateway/routes/health.route";
 import enhancedResponse from "@gateway/middleware/enhancedResponse.middleware";
 import { checkConnection } from "@gateway/utils/elasticsearch.util";
 import { initializeApm } from "@gateway/utils/apm.util";
@@ -22,7 +22,7 @@ app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 
 app.use(enhancedResponse);
 
-app.get(`${API_PREFIX}/health`, healthCheckHandler);
+app.use(`${API_PREFIX}/health`, healthCheckRouter);
 
 app.use(errorHandler);
 

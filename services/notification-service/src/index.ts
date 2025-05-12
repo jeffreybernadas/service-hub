@@ -4,7 +4,7 @@ import { initializeApm } from "@notifications/utils/apm.util";
 import express from "express";
 import cors from "cors";
 import { errorHandler } from "@jeffreybernadas/service-hub-helper";
-import healthCheckHandler from "@notifications/routes/health.route";
+import healthCheckRouter from "@notifications/routes/health.route";
 import {
   APP_ORIGIN,
   PORT,
@@ -20,6 +20,7 @@ import enhancedResponse from "@notifications/middleware/enhancedResponse.middlew
 import { createConnection } from "@notifications/configs/rabbitmq.config";
 import { consumerAuthEmail } from "./handlers/queues/auth.consumer";
 import { consumerOrderEmail } from "./handlers/queues/order.consumer";
+
 const app = express();
 
 app.use(express.json());
@@ -28,7 +29,7 @@ app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 
 app.use(enhancedResponse);
 
-app.get(`${API_PREFIX}/health`, healthCheckHandler);
+app.use(`${API_PREFIX}/health`, healthCheckRouter);
 
 app.use(errorHandler);
 
