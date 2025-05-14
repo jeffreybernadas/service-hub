@@ -6,7 +6,7 @@ import cors from "cors";
 import { errorHandler } from "@jeffreybernadas/service-hub-helper";
 import healthCheckRouter from "@notifications/routes/health.route";
 import {
-  APP_ORIGIN,
+  CLIENT_URL,
   PORT,
   SERVICE_NAME,
 } from "@notifications/constants/env.constants";
@@ -25,7 +25,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: APP_ORIGIN, credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
 app.use(enhancedResponse);
 
