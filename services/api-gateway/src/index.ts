@@ -15,8 +15,11 @@ import {
 } from "@jeffreybernadas/service-hub-helper";
 import {
   CLIENT_URL,
+  NODE_ENV,
   PORT,
   SERVICE_NAME,
+  SECRET_KEY_ONE,
+  SECRET_KEY_TWO,
 } from "@gateway/constants/env.constants";
 import { API_VERSION, API_PREFIX } from "@gateway/constants/version.constants";
 import { log } from "@gateway/utils/logger.util";
@@ -28,6 +31,8 @@ import helmet from "helmet";
 import cookieSession from "cookie-session";
 import compression from "compression";
 import { isAxiosError } from "axios";
+import http from "http";
+
 const app = express();
 
 const securityMiddleware = (app: Application) => {
@@ -35,10 +40,10 @@ const securityMiddleware = (app: Application) => {
   app.use(
     cookieSession({
       name: "session",
-      keys: [`${process.env.SECRET_KEY_ONE}`, `${process.env.SECRET_KEY_TWO}`],
+      keys: [`${SECRET_KEY_ONE}`, `${SECRET_KEY_TWO}`],
       maxAge: 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV !== "development",
-      ...(process.env.NODE_ENV !== "development" && {
+      secure: NODE_ENV !== "development",
+      ...(NODE_ENV !== "development" && {
         sameSite: "none",
       }),
     }),
@@ -91,14 +96,16 @@ const errorMiddleware = (app: Application) => {
         url: axiosError.config?.url,
         method: axiosError.config?.method,
         status: axiosError.response?.status,
-        data: axiosError.response?.data
+        data: axiosError.response?.data,
       });
 
       return res
         .status(axiosError.response?.status ?? INTERNAL_SERVER_ERROR)
         .json({
-          message: axiosError.response?.data?.message ?? "External API error occurred.",
-          error: process.env.NODE_ENV === "development" ? axiosError.message : undefined
+          message:
+            axiosError.response?.data?.message ??
+            "External API error occurred.",
+          error: NODE_ENV === "development" ? axiosError.message : undefined,
         });
     }
 
@@ -110,6 +117,17 @@ const errorMiddleware = (app: Application) => {
   app.use(errorHandler);
 };
 
+const startHttpServer = (httpServer: http.Server) => {
+  try {
+    log.info(`API Gateway service has started with process id: ${process.pid}`);
+    httpServer.listen(PORT, () => {
+      log.info(`API Gateway (${API_VERSION}) is running on port ${PORT}`);
+    });
+  } catch (error) {
+    log.error("Gateway service startHttpServer() error method:", error);
+  }
+};
+
 const startServer = async () => {
   try {
     securityMiddleware(app);
@@ -119,10 +137,9 @@ const startServer = async () => {
     initializeApm();
     errorMiddleware(app);
     notFoundMiddleware(app);
-    
-    app.listen(PORT, () => {
-      log.info(`API Gateway (${API_VERSION}) is running on port ${PORT} - Health endpoint: http://localhost:${PORT}${API_PREFIX}/health`);
-    });
+    const httpServer: http.Server = new http.Server(app);
+    startHttpServer(httpServer);
+    // TODO: Add socket.io server
   } catch (error) {
     log.error(`Error during server startup: ${error}`);
     process.exit(1);
