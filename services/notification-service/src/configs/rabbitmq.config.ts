@@ -1,4 +1,4 @@
-import amqplib, { Channel } from "amqplib";
+import amqplib from "amqplib";
 import {
   RABBITMQ_ENDPOINT,
   SERVICE_NAME,
