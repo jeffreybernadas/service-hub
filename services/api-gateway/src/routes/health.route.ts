@@ -1,5 +1,5 @@
 import { Router } from "express";
-import healthCheckHandler from "@notifications/controller/health.controller";
+import healthCheckHandler from "@gateway/controller/health.controller";
 
 const healthCheckRouter = Router();
 

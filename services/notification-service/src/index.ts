@@ -4,9 +4,9 @@ import { initializeApm } from "@notifications/utils/apm.util";
 import express from "express";
 import cors from "cors";
 import { errorHandler } from "@jeffreybernadas/service-hub-helper";
-import healthCheckHandler from "@notifications/routes/health.route";
+import healthCheckRouter from "@notifications/routes/health.route";
 import {
-  APP_ORIGIN,
+  CLIENT_URL,
   PORT,
   SERVICE_NAME,
 } from "@notifications/constants/env.constants";
@@ -18,17 +18,18 @@ import { checkConnection } from "@notifications/utils/elasticsearch.util";
 import { log } from "@notifications/utils/logger.util";
 import enhancedResponse from "@notifications/middleware/enhancedResponse.middleware";
 import { createConnection } from "@notifications/configs/rabbitmq.config";
-import { consumerAuthEmail } from "./handlers/queues/auth.consumer";
-import { consumerOrderEmail } from "./handlers/queues/order.consumer";
+import { consumerAuthEmail } from "@notifications/handlers/queues/auth.consumer";
+import { consumerOrderEmail } from "@notifications/handlers/queues/order.consumer";
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: APP_ORIGIN, credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
 app.use(enhancedResponse);
 
-app.get(`${API_PREFIX}/health`, healthCheckHandler);
+app.use(`${API_PREFIX}/health`, healthCheckRouter);
 
 app.use(errorHandler);
 

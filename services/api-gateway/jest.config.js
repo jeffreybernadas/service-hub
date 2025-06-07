@@ -20,7 +20,7 @@ module.exports = {
     "/src/__mocks__/",
   ],
   moduleNameMapper: {
-    "@notifications/(.*)": ["<rootDir>/src/$1"],
+    "@gateway/(.*)": ["<rootDir>/src/$1"],
   },
   coverageThreshold: {
     global: {
