@@ -1,4 +1,4 @@
-import { loadTemplate } from "./templateLoader.util";
+import { loadTemplate } from "@notifications/utils/templateLoader.util";
 import {
   IOrderPlacedTemplateData,
   IOrderReceiptTemplateData,

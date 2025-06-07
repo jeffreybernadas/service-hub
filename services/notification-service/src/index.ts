@@ -18,8 +18,8 @@ import { checkConnection } from "@notifications/utils/elasticsearch.util";
 import { log } from "@notifications/utils/logger.util";
 import enhancedResponse from "@notifications/middleware/enhancedResponse.middleware";
 import { createConnection } from "@notifications/configs/rabbitmq.config";
-import { consumerAuthEmail } from "./handlers/queues/auth.consumer";
-import { consumerOrderEmail } from "./handlers/queues/order.consumer";
+import { consumerAuthEmail } from "@notifications/handlers/queues/auth.consumer";
+import { consumerOrderEmail } from "@notifications/handlers/queues/order.consumer";
 
 const app = express();
 

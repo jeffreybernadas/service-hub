@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { log } from "./logger.util";
+import { log } from "@notifications/utils/logger.util";
 
 /**
  * Loads an HTML template from the file system and replaces placeholders with values
