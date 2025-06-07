@@ -15,7 +15,7 @@ import { log } from "@gateway/utils/logger.util";
 export const initializeApm = () => {
   // Only start APM if explicitly enabled via environment variable
   if (ELASTIC_APM_ENABLE === "0") {
-    log.info("APM is disabled. Set ENABLE_APM=1 to enable it.");
+    log.info("APM is disabled. Set ELASTIC_APM_ENABLE=1 to enable it.");
     return null;
   }
 

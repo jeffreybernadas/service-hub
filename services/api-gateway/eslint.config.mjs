@@ -29,7 +29,7 @@ export default [
   // Eslint Rules
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
       "no-multiple-empty-lines": [2, { max: 2 }],
       semi: [2, "always"],
       curly: ["warn"],

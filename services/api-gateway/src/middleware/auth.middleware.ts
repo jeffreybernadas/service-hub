@@ -25,7 +25,7 @@ export const verifyUser = (
   try {
     const payload: IAuthPayload = verify(
       req.session?.jwt,
-      `${JWT_TOKEN_SECRET}`,
+      JWT_TOKEN_SECRET,
     ) as IAuthPayload;
     req.currentUser = payload;
   } catch (error) {

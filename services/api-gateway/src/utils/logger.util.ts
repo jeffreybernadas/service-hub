@@ -6,7 +6,7 @@ import {
 import { Logger } from "winston";
 
 /**
- * Centralized logger instance for the notification service
+ * Centralized logger instance for the api-gateway service
  * Uses winston logger from the service-hub-helper package
  */
 export const log: Logger = winstonLogger(

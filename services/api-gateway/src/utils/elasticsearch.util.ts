@@ -9,7 +9,11 @@ const elasticSearchClient = new Client({
 
 export async function checkConnection(): Promise<void> {
   let isConnected = false;
-  while (!isConnected) {
+  let retryCount = 0;
+  const maxRetries = 10;
+  const baseDelay = 1000; // 1 second
+
+  while (!isConnected && retryCount < maxRetries) {
     try {
       const health: ClusterHealthResponse =
         await elasticSearchClient.cluster.health({});
@@ -18,12 +22,26 @@ export async function checkConnection(): Promise<void> {
       );
       isConnected = true;
     } catch (error) {
-      log.error("Connection to Elasticsearch failed. Retrying...");
+      retryCount++;
+      const delay = baseDelay * Math.pow(2, retryCount - 1); // Exponential backoff
+
+      if (retryCount >= maxRetries) {
+        log.error(
+          `Failed to connect to Elasticsearch after ${maxRetries} attempts`,
+        );
+        throw new Error("Elasticsearch connection timeout");
+      }
+
+      log.error(
+        `Connection to Elasticsearch failed (attempt ${retryCount}/${maxRetries}). Retrying in ${delay}ms...`,
+      );
       log.log(
         "error",
         "Service Hub API Gateway checkConnection() function:",
         error,
       );
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
