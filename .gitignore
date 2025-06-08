@@ -1,6 +1,6 @@
 /docker-volumes
 .env
-/helper-library
+/service-hub-helper
 /services/*/node_modules
 /services/*/.env
 /services/*/package-lock.json
