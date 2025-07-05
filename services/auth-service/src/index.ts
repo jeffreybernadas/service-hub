@@ -28,6 +28,7 @@ import { checkConnection } from "@auth/utils/elasticsearch.util";
 import { initializeApm } from "@auth/utils/apm.util";
 import { AmqpChannel, createConnection } from "@auth/config/rabbitmq.config";
 import { connectToDatabase } from "@auth/config/database.config";
+import { cloudinaryConfig } from "@auth/config/cloudinary.config";
 
 const app = express();
 export let _channel: AmqpChannel | undefined;
@@ -71,6 +72,7 @@ app.use(`${API_PREFIX}/`, authRouter);
 
 
 const startServer = async () => {
+  cloudinaryConfig();
   // First establish connection to RabbitMQ
   _channel = await createConnection();
 
