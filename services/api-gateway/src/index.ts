@@ -32,6 +32,19 @@ import cookieSession from "cookie-session";
 import compression from "compression";
 import { isAxiosError } from "axios";
 import http from "http";
+import { axiosAuthInstance } from "@gateway/api/auth.api";
+import authRouter from "@gateway/routes/auth.route";
+
+interface MicroservicesResponse {
+  service: string;
+  appVersion: string;
+  method: string;
+  status: number;
+  timestamp: string;
+  responseTime: string;
+  url: string;
+  data: object;
+}
 
 const app = express();
 
@@ -58,7 +71,8 @@ const securityMiddleware = (app: Application) => {
   );
   app.use((req: Request, _res: Response, next: NextFunction) => {
     if (req.session?.jwt) {
-      // TODO: Add JWT to the request headers
+      axiosAuthInstance.defaults.headers["Authorization"] =
+        `Bearer ${req.session?.jwt}`;
     }
     next();
   });
@@ -73,6 +87,7 @@ const standardMiddleware = (app: Application) => {
 
 const routesMiddleware = (app: Application) => {
   app.use(`${API_PREFIX}/health`, healthCheckRouter);
+  app.use(`${API_PREFIX}/auth`, authRouter);
 };
 
 const notFoundMiddleware = (app: Application) => {
@@ -88,24 +103,25 @@ const notFoundMiddleware = (app: Application) => {
 const errorMiddleware = (app: Application) => {
   // Handle Axios errors
   app.use((error: Error, _req: Request, res: Response, next: NextFunction) => {
-    log.error(`Error caught by middleware: ${error.message}`);
-
     if (isAxiosError(error)) {
       const axiosError = error;
-      log.error(`API Gateway Axios Error:`, {
-        url: axiosError.config?.url,
-        method: axiosError.config?.method,
-        status: axiosError.response?.status,
-        data: axiosError.response?.data,
-      });
+      const responseData = axiosError.response?.data as MicroservicesResponse;
 
       return res
         .status(axiosError.response?.status ?? INTERNAL_SERVER_ERROR)
         .json({
-          message:
-            axiosError.response?.data?.message ??
-            "External API error occurred.",
-          error: NODE_ENV === "development" ? axiosError.message : undefined,
+          message: "An error on a service occurred.",
+          error: axiosError.message,
+          serviceInfo: {
+            service: responseData?.service,
+            appVersion: responseData?.appVersion,
+            method: responseData?.method,
+            status: responseData?.status,
+            timestamp: responseData?.timestamp,
+            responseTime: responseData?.responseTime,
+            url: responseData?.url,
+            data: { ...responseData?.data },
+          },
         });
     }
 

@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.0.1",
-    "@jeffreybernadas/service-hub-helper": "^0.0.6",
+    "@jeffreybernadas/service-hub-helper": "^0.0.8",
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.0",
