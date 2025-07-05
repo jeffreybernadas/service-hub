@@ -33,21 +33,25 @@ export const signupHandler = catchErrors(
       ...req.body,
     });
 
+    let profilePictureUpload: UploadApiResponse | null = null;
     const profilePublicId = uuidv4();
-    const profilePictureUpload: UploadApiResponse = (await cloudinaryFileUpload(
-      profilePicture as string,
-      profilePublicId,
-      true,
-      true,
-    )) as UploadApiResponse;
 
-    appAssert(
-      profilePictureUpload.public_id,
-      BAD_REQUEST,
-      "Failed to upload profile picture.",
-      SERVICE_NAME,
-      "error",
-    );
+    if (profilePicture) {
+      profilePictureUpload = (await cloudinaryFileUpload(
+        profilePicture,
+        profilePublicId,
+        true,
+        true,
+      )) as UploadApiResponse;
+
+      appAssert(
+        profilePictureUpload.public_id,
+        BAD_REQUEST,
+        "Failed to upload profile picture.",
+        SERVICE_NAME,
+        "error",
+      );
+    }
 
     // For email verification token
     const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));

@@ -19,10 +19,14 @@ import { JWT_TOKEN_SECRET, SERVICE_NAME } from "@auth/constants/env.constants";
 export const createAuthUser = async (
   data: IAuthDocument,
 ): Promise<IAuthDocument> => {
-  const existingUser = await getUserByUsernameOrEmail({
-    email: data.email as string,
-    username: data.username as string,
-  });
+  const existingUser: Model = (await AuthModel.findOne({
+    where: {
+      [Op.or]: [
+        { username: firstLetterUppercase(data?.username as string) },
+        { email: lowerCase(data?.email as string) },
+      ],
+    },
+  })) as Model;
 
   appAssert(
     !existingUser,
