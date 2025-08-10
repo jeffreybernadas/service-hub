@@ -70,7 +70,7 @@ export const createAuthUser = async (
 
 export const getAuthUserById = async (
   id: number,
-): Promise<Model<IAuthDocument>> => {
+): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findByPk(id, {
     attributes: {
       exclude: ["password"],
@@ -94,7 +94,7 @@ export const getUserByUsernameOrEmail = async ({
 }: {
   username: string;
   email: string;
-}): Promise<Model<IAuthDocument>> => {
+}): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: {
       [Op.or]: [
@@ -120,13 +120,10 @@ export const getUserByUsernameOrEmail = async ({
 
 export const getUserByUsername = async (
   username: string,
-): Promise<Model<IAuthDocument>> => {
+): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: {
       username: firstLetterUppercase(username),
-    },
-    attributes: {
-      exclude: ["password"],
     },
   })) as Model;
 
@@ -143,13 +140,10 @@ export const getUserByUsername = async (
 
 export const getUserByEmail = async (
   email: string,
-): Promise<Model<IAuthDocument>> => {
+): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: {
       email: lowerCase(email),
-    },
-    attributes: {
-      exclude: ["password"],
     },
   })) as Model;
 
@@ -166,7 +160,7 @@ export const getUserByEmail = async (
 
 export const getAuthUserByVerificationToken = async (
   token: string,
-): Promise<Model<IAuthDocument>> => {
+): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: { emailVerificationToken: token },
     attributes: {
@@ -187,7 +181,7 @@ export const getAuthUserByVerificationToken = async (
 
 export const getAuthUserByPasswordResetToken = async (
   token: string,
-): Promise<Model<IAuthDocument>> => {
+): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: {
       [Op.and]: [

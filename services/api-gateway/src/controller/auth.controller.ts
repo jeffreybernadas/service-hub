@@ -1,9 +1,10 @@
-import { signUpApi } from "@gateway/api/auth.api";
+import { signUpApi, signInApi } from "@gateway/api/auth.api";
 import { ServiceResponse } from "@gateway/types/response.type";
 import {
   catchErrors,
   CREATED,
   IAuthDocument,
+  OK,
 } from "@jeffreybernadas/service-hub-helper";
 import { Request, Response } from "express";
 
@@ -20,6 +21,19 @@ export const signupGatewayHandler = catchErrors(
     );
     req.session = { jwt: response.data.data.token };
     res.status(CREATED).json({
+      message: response.data.data.message,
+      user: response.data.data.user,
+    });
+  },
+);
+
+export const signinGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> = await signInApi(
+      req.body,
+    );
+    req.session = { jwt: response.data.data.token };
+    res.status(OK).json({
       message: response.data.data.message,
       user: response.data.data.user,
     });

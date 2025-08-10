@@ -12,3 +12,7 @@ export const signUpApi = async (body: IAuth): Promise<AxiosResponse> => {
   const response: AxiosResponse = await axiosAuthInstance.post("/signup", body);
   return response;
 };
+export const signInApi = async (body: IAuth): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.post("/signin", body);
+  return response;
+};

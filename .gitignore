@@ -6,3 +6,4 @@
 /services/*/package-lock.json
 /services/*/coverage
 /services/*/dist
+/.idea

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { UploadApiResponse } from "cloudinary";
+import { omit } from "lodash";
 import {
   appAssert,
   BAD_REQUEST,
@@ -11,13 +12,22 @@ import {
   IEmailMessageDetails,
   lowerCase,
   catchErrors,
+  OK,
+  isEmail,
+  NOT_FOUND,
 } from "@jeffreybernadas/service-hub-helper";
 import crypto from "crypto";
-import { signupSchema } from "@auth/schemas/auth.schema";
-import { createAuthUser, signToken } from "@auth/services/auth.service";
+import { signInSchema, signupSchema } from "@auth/schemas/auth.schema";
+import {
+  createAuthUser,
+  getUserByEmail,
+  getUserByUsername,
+  signToken,
+} from "@auth/services/auth.service";
 import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
 import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
 import { _channel } from "@auth/index";
+import AuthModel from "@auth/models/auth.model";
 
 export const signupHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -104,6 +114,52 @@ export const signupHandler = catchErrors(
     res.status(CREATED).json({
       message: "User created successfully",
       user,
+      token: userJWT,
+    });
+  },
+);
+
+export const signinHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { username, password } = signInSchema.parse({
+      ...req.body,
+    });
+
+    const isValidEmail = isEmail(username);
+    const existingUser = isValidEmail
+      ? await getUserByEmail(username)
+      : await getUserByUsername(username);
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      `User with username or email ${username} not found`,
+      SERVICE_NAME,
+      "error",
+    );
+
+    const passwordMatch = await AuthModel.prototype.comparePassword(
+      password,
+      existingUser.password as string,
+    );
+
+    appAssert(
+      passwordMatch,
+      BAD_REQUEST,
+      "Invalid credentials",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const userJWT: string = signToken({
+      id: existingUser.id!,
+      email: existingUser.email!,
+      username: existingUser.username!,
+    });
+
+    res.status(OK).json({
+      message: "User signed in successfully",
+      user: omit(existingUser, ["password"]),
       token: userJWT,
     });
   },
