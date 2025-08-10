@@ -68,9 +68,7 @@ export const createAuthUser = async (
   return userData;
 };
 
-export const getAuthUserById = async (
-  id: number,
-): Promise<IAuthDocument> => {
+export const getAuthUserById = async (id: number): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findByPk(id, {
     attributes: {
       exclude: ["password"],
@@ -138,9 +136,7 @@ export const getUserByUsername = async (
   return user.dataValues;
 };
 
-export const getUserByEmail = async (
-  email: string,
-): Promise<IAuthDocument> => {
+export const getUserByEmail = async (email: string): Promise<IAuthDocument> => {
   const user: Model = (await AuthModel.findOne({
     where: {
       email: lowerCase(email),
@@ -171,7 +167,7 @@ export const getAuthUserByVerificationToken = async (
   appAssert(
     user,
     NOT_FOUND,
-    `User with verification token of ${token} not found`,
+    `User with email verification token of ${token} not found`,
     SERVICE_NAME,
     "error",
   );
@@ -209,7 +205,7 @@ export const updateEmailVerification = async ({
 }: {
   id: number;
   emailVerified: number;
-  emailVerificationToken: string;
+  emailVerificationToken?: string;
 }): Promise<void> => {
   await AuthModel.update(
     { emailVerified, emailVerificationToken },

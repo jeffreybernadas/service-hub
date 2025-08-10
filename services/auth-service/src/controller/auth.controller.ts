@@ -20,9 +20,12 @@ import crypto from "crypto";
 import { signInSchema, signupSchema } from "@auth/schemas/auth.schema";
 import {
   createAuthUser,
+  getAuthUserById,
+  getAuthUserByVerificationToken,
   getUserByEmail,
   getUserByUsername,
   signToken,
+  updateEmailVerification,
 } from "@auth/services/auth.service";
 import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
 import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
@@ -164,3 +167,44 @@ export const signinHandler = catchErrors(
     });
   },
 );
+
+export const verifyEmail = catchErrors(async (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  const userExisting = await getAuthUserByVerificationToken(token as string);
+  appAssert(
+    userExisting,
+    NOT_FOUND,
+    "Verification token is either invalid, expired or already used",
+    SERVICE_NAME,
+    "error",
+  );
+
+  appAssert(
+    !userExisting.emailVerified,
+    NOT_FOUND,
+    "Email is already verified",
+    SERVICE_NAME,
+    "error",
+  );
+
+  await updateEmailVerification({
+    id: userExisting.id as number,
+    emailVerified: 1
+  });
+
+  const updatedUser = await getAuthUserById(userExisting.id as number);
+
+  appAssert(
+    updatedUser,
+    BAD_REQUEST,
+    "Email verification failed. Please try again.",
+    SERVICE_NAME,
+    "error",
+  );
+
+  res.status(OK).json({
+    message: "Email verified successfully.",
+    user: updatedUser,
+  });
+});
