@@ -30,7 +30,7 @@ import {
   getUserByUsername,
   signToken,
   updateEmailVerification,
-  updatePasswordResetToken,
+  forgotPasswordToken,
 } from "@auth/services/auth.service";
 import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
 import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
@@ -234,7 +234,7 @@ export const forgotPassword = catchErrors(
     const date = new Date();
     date.setHours(date.getHours() + 1);
 
-    await updatePasswordResetToken({
+    await forgotPasswordToken({
       id: existingEmail.id as number,
       passwordResetToken: randomCharacters,
       passwordResetExpires: date,
@@ -245,7 +245,7 @@ export const forgotPassword = catchErrors(
     const messageDetails: IEmailMessageDetails = {
       receiverEmail: existingEmail.email,
       resetLink,
-      template: "password-reset",
+      template: "forgot-password",
       username: existingEmail.username,
     };
 

@@ -18,10 +18,10 @@ import {
  * @param data The password reset template data
  * @returns Email template object with subject, text, and HTML content
  */
-export const getPasswordResetTemplate = (data: IPasswordResetTemplateData) => ({
+export const getForgotPasswordTemplate = (data: IPasswordResetTemplateData) => ({
   subject: "Password Reset Request",
   text: `You requested a password reset. Click on the link to reset your password: ${data.url}`,
-  html: loadTemplate("password-reset", { data }),
+  html: loadTemplate("forgot-password", { data }),
 });
 
 /**

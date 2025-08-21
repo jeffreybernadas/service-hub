@@ -2,7 +2,7 @@ import { IEmailLocals } from "@jeffreybernadas/service-hub-helper";
 
 export type IAuthEmailTemplates =
   | "verify-email"
-  | "password-reset"
+  | "forgot-password"
   | "password-reset-success"
   | "otp-verification"
   | "order-placed"

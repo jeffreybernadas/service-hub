@@ -213,7 +213,7 @@ export const updateEmailVerification = async ({
   );
 };
 
-export const updatePasswordResetToken = async ({
+export const forgotPasswordToken = async ({
   id,
   passwordResetToken,
   passwordResetExpires,
