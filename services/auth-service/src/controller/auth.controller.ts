@@ -19,6 +19,7 @@ import {
 import crypto from "crypto";
 import {
   emailSchema,
+  forgotPasswordSchema,
   signInSchema,
   signupSchema,
 } from "@auth/schemas/auth.schema";
@@ -31,6 +32,8 @@ import {
   signToken,
   updateEmailVerification,
   forgotPasswordToken,
+  getAuthUserByPasswordResetToken,
+  updatePassword,
 } from "@auth/services/auth.service";
 import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
 import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
@@ -218,10 +221,10 @@ export const forgotPassword = catchErrors(
   async (req: Request, res: Response) => {
     const email = emailSchema.parse(req.body.email);
 
-    const existingEmail = await getUserByEmail(email);
+    const existingUser = await getUserByEmail(email);
 
     appAssert(
-      existingEmail,
+      existingUser,
       NOT_FOUND,
       "Invalid credentials",
       SERVICE_NAME,
@@ -235,7 +238,7 @@ export const forgotPassword = catchErrors(
     date.setHours(date.getHours() + 1);
 
     await forgotPasswordToken({
-      id: existingEmail.id as number,
+      id: existingUser.id as number,
       passwordResetToken: randomCharacters,
       passwordResetExpires: date,
     });
@@ -243,10 +246,10 @@ export const forgotPassword = catchErrors(
     const resetLink = `${CLIENT_URL}/reset_password?token=${randomCharacters}`;
 
     const messageDetails: IEmailMessageDetails = {
-      receiverEmail: existingEmail.email,
+      receiverEmail: existingUser.email,
       resetLink,
       template: "forgot-password",
-      username: existingEmail.username,
+      username: existingUser.username,
     };
 
     appAssert(
@@ -267,6 +270,61 @@ export const forgotPassword = catchErrors(
 
     res.status(OK).json({
       message: "Password reset email sent.",
+    });
+  },
+);
+
+export const resetPassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const { newPassword } = forgotPasswordSchema.parse({
+      ...req.body,
+    });
+
+    const { token } = req.params;
+
+    console.log("token: ", req.params);
+
+    const existingUser = await getAuthUserByPasswordResetToken(token);
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      "The request is not valid or has expired.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const hashedPassword = await AuthModel.prototype.hashPassword(newPassword);
+
+    await updatePassword({
+      id: existingUser.id!,
+      password: hashedPassword,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      template: "password-reset-success",
+      username: existingUser.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider updatePassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Password reset request is successful. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Password reset request is successful.",
     });
   },
 );

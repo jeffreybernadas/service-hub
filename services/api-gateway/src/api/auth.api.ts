@@ -35,3 +35,11 @@ export const forgotPasswordApi = async (
   );
   return response;
 };
+
+export const resetPasswordApi = async (body: IAuth, token: string): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.put(
+    `/reset-password/${token}`,
+    body,
+  );
+  return response;
+};

@@ -3,6 +3,7 @@ import {
   signInApi,
   verifyEmailApi,
   forgotPasswordApi,
+  resetPasswordApi,
 } from "@gateway/api/auth.api";
 import { ServiceResponse } from "@gateway/types/response.type";
 import {
@@ -18,6 +19,7 @@ interface SignUpResponseData {
   user: IAuthDocument;
   token: string;
 }
+// TODO: Improve ServiceResponse type
 
 export const signupGatewayHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -61,6 +63,17 @@ export const forgotPasswordGatewayHandler = catchErrors(
   async (req: Request, res: Response) => {
     const response: ServiceResponse<SignUpResponseData> =
       await forgotPasswordApi(req.body);
+    res.status(OK).json({
+      message: response.data.data.message,
+      user: response.data.data.user,
+    });
+  },
+);
+
+export const resetPasswordGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await resetPasswordApi(req.body, req.params.token);
     res.status(OK).json({
       message: response.data.data.message,
       user: response.data.data.user,

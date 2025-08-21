@@ -1,0 +1,18 @@
+meta {
+  name: reset-passsword
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:3101/api/v1/auth/reset-password/c610f03e7c2440a1756b93a68a3e9bac6cd71144
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "newPassword": "test1234",
+    "confirmNewPassword": "test1234"
+  }
+}

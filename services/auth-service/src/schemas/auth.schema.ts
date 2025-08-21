@@ -72,7 +72,6 @@ export const signInSchema = z.object({
 // If user is not logged in
 export const forgotPasswordSchema = z
   .object({
-    email: emailSchema,
     newPassword: passwordSchema,
     confirmNewPassword: passwordSchema,
   })
