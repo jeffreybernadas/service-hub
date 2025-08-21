@@ -19,6 +19,19 @@ export const signInApi = async (body: IAuth): Promise<AxiosResponse> => {
 };
 
 export const verifyEmailApi = async (body: IAuth): Promise<AxiosResponse> => {
-  const response: AxiosResponse = await axiosAuthInstance.put("/verify-email", body);
+  const response: AxiosResponse = await axiosAuthInstance.put(
+    "/verify-email",
+    body,
+  );
+  return response;
+};
+
+export const forgotPasswordApi = async (
+  body: IAuth,
+): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.put(
+    "/forgot-password",
+    body,
+  );
   return response;
 };

@@ -30,7 +30,7 @@ const countrySchema = z.string({
   invalid_type_error: "Country must be a string",
 });
 
-const emailSchema = z
+export const emailSchema = z
   .string({
     required_error: "Email is required",
     invalid_type_error: "Email must be a string",
@@ -70,14 +70,16 @@ export const signInSchema = z.object({
 });
 
 // If user is not logged in
-export const forgotPasswordSchema = z.object({
-  email: emailSchema,
-  newPassword: passwordSchema,
-  confirmNewPassword: passwordSchema,
-}).refine((data) => data.newPassword === data.confirmNewPassword, {
-  message: "Passwords do not match",
-  path: ["confirmNewPassword"],
-});
+export const forgotPasswordSchema = z
+  .object({
+    email: emailSchema,
+    newPassword: passwordSchema,
+    confirmNewPassword: passwordSchema,
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords do not match",
+    path: ["confirmNewPassword"],
+  });
 
 // If user is logged in
 export const changePasswordSchema = z

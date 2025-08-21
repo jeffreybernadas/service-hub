@@ -234,8 +234,6 @@ export const updatePassword = async ({
 }: {
   id: number;
   password: string;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
 }): Promise<void> => {
   await AuthModel.update(
     { password, passwordResetToken: "", passwordResetExpires: new Date() },

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  forgotPassword,
   signinHandler,
   signupHandler,
   verifyEmail,
@@ -24,6 +25,12 @@ authRouter.put(
   "/verify-email",
   verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
   verifyEmail,
+);
+
+authRouter.put(
+  "/forgot-password",
+  verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
+  forgotPassword,
 );
 
 export default authRouter;

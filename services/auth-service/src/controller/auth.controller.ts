@@ -17,7 +17,11 @@ import {
   NOT_FOUND,
 } from "@jeffreybernadas/service-hub-helper";
 import crypto from "crypto";
-import { signInSchema, signupSchema } from "@auth/schemas/auth.schema";
+import {
+  emailSchema,
+  signInSchema,
+  signupSchema,
+} from "@auth/schemas/auth.schema";
 import {
   createAuthUser,
   getAuthUserById,
@@ -26,6 +30,7 @@ import {
   getUserByUsername,
   signToken,
   updateEmailVerification,
+  updatePasswordResetToken,
 } from "@auth/services/auth.service";
 import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
 import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
@@ -190,7 +195,7 @@ export const verifyEmail = catchErrors(async (req: Request, res: Response) => {
 
   await updateEmailVerification({
     id: userExisting.id as number,
-    emailVerified: 1
+    emailVerified: 1,
   });
 
   const updatedUser = await getAuthUserById(userExisting.id as number);
@@ -208,3 +213,60 @@ export const verifyEmail = catchErrors(async (req: Request, res: Response) => {
     user: updatedUser,
   });
 });
+
+export const forgotPassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const email = emailSchema.parse(req.body.email);
+
+    const existingEmail = await getUserByEmail(email);
+
+    appAssert(
+      existingEmail,
+      NOT_FOUND,
+      "Invalid credentials",
+      SERVICE_NAME,
+      "error",
+    );
+
+    // For password reset verification token
+    const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
+    const randomCharacters: string = randomBytes.toString("hex");
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+
+    await updatePasswordResetToken({
+      id: existingEmail.id as number,
+      passwordResetToken: randomCharacters,
+      passwordResetExpires: date,
+    });
+
+    const resetLink = `${CLIENT_URL}/reset_password?token=${randomCharacters}`;
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingEmail.email,
+      resetLink,
+      template: "password-reset",
+      username: existingEmail.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider forgotPassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Password reset link sent to the user. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Password reset email sent.",
+    });
+  },
+);

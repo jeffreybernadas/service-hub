@@ -1,4 +1,9 @@
-import { signUpApi, signInApi, verifyEmailApi } from "@gateway/api/auth.api";
+import {
+  signUpApi,
+  signInApi,
+  verifyEmailApi,
+  forgotPasswordApi,
+} from "@gateway/api/auth.api";
 import { ServiceResponse } from "@gateway/types/response.type";
 import {
   catchErrors,
@@ -45,6 +50,17 @@ export const verifyEmailGatewayHandler = catchErrors(
     const response: ServiceResponse<SignUpResponseData> = await verifyEmailApi(
       req.body,
     );
+    res.status(OK).json({
+      message: response.data.data.message,
+      user: response.data.data.user,
+    });
+  },
+);
+
+export const forgotPasswordGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await forgotPasswordApi(req.body);
     res.status(OK).json({
       message: response.data.data.message,
       user: response.data.data.user,
