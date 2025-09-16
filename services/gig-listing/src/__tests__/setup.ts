@@ -1,5 +1,5 @@
 // Mock environment variables
-process.env.SERVICE_NAME = "service-listing-test";
+process.env.SERVICE_NAME = "gig-listing-test";
 process.env.CLIENT_URL = "http://localhost:3000";
 process.env.APP_ORIGIN = "http://localhost:3104";
 process.env.NODE_ENV = "test";

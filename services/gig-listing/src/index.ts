@@ -12,26 +12,26 @@ import {
   JWT_TOKEN_SECRET,
   PORT,
   SERVICE_NAME,
-} from "@service-listing/constants/env.constants";
+} from "@gig-listing/constants/env.constants";
 import {
   API_PREFIX,
   API_VERSION,
-} from "@service-listing/constants/version.constant";
-import healthCheckRouter from "@service-listing/routes/health.route";
-import { log } from "@service-listing/utils/logger.util";
-import enhancedResponse from "@service-listing/middleware/enhancedResponse.middleware";
+} from "@gig-listing/constants/version.constant";
+import healthCheckRouter from "@gig-listing/routes/health.route";
+import { log } from "@gig-listing/utils/logger.util";
+import enhancedResponse from "@gig-listing/middleware/enhancedResponse.middleware";
 import {
   errorHandler,
   IAuthPayload,
 } from "@jeffreybernadas/service-hub-helper";
 import { verify } from "jsonwebtoken";
 import compression from "compression";
-import { checkConnection } from "@service-listing/utils/elasticsearch.util";
-import { initializeApm } from "@service-listing/utils/apm.util";
+import { checkConnection } from "@gig-listing/utils/elasticsearch.util";
+import { initializeApm } from "@gig-listing/utils/apm.util";
 import {
   AmqpChannel,
   createConnection,
-} from "@service-listing/config/rabbitmq.config";
+} from "@gig-listing/config/rabbitmq.config";
 
 const app = express();
 let _channel: AmqpChannel | undefined;
@@ -86,7 +86,7 @@ const startServer = async () => {
 
   app.listen(PORT, () => {
     log.info(
-      `Service Listing Service (${API_VERSION}) is running on port ${PORT}.`,
+      `Gig Listing Service (${API_VERSION}) is running on port ${PORT}.`,
     );
   });
 };

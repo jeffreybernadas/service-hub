@@ -118,7 +118,7 @@
       { "transform": "typescript-transform-paths", "afterDeclarations": true }
     ],
     "paths": {
-      "@service-listing/*": ["src/*"]
+      "@gig-listing/*": ["src/*"]
     }
   },
   "include": ["src/**/*"],

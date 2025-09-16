@@ -30,9 +30,9 @@ The Service Hub platform uses the following architectural patterns:
 | [Auth Service](./auth-service) | 3101 | Manages authentication and authorization | TBD |
 | [Notification Service](./notification-service) | 3102 | Handles email notifications and messaging | Deployed |
 | [User Service](./user-service) | 3103 | Handles user profiles and management | TBD |
-| [Service Listing](./service-listing) | 3104 | Manages service listings and categories | TBD |
+| [Gig Listing](./gig-listing) | 3104 | Manages gig listings and categories | TBD |
 | [Order Service](./order-service) | 3105 | Processes orders and payments | TBD |
-| [Review Service](./review-service) | 3106 | Manages service reviews and ratings | TBD |
+| [Review Service](./review-service) | 3106 | Manages gig reviews and ratings | TBD |
 | [Chat Service](./chat-service) | 3107 | Handles real-time messaging between users | TBD |
 
 ## 🔄 Inter-Service Communication

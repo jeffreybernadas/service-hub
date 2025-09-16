@@ -4,9 +4,9 @@ import {
   ELASTIC_APM_SECRET_TOKEN,
   NODE_ENV,
   SERVICE_NAME,
-} from "@service-listing/constants/env.constants";
+} from "@gig-listing/constants/env.constants";
 import apm from "elastic-apm-node";
-import { log } from "@service-listing/utils/logger.util";
+import { log } from "@gig-listing/utils/logger.util";
 
 /**
  * Initialize Elastic APM agent

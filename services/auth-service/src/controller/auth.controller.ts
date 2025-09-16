@@ -282,8 +282,6 @@ export const resetPassword = catchErrors(
 
     const { token } = req.params;
 
-    console.log("token: ", req.params);
-
     const existingUser = await getAuthUserByPasswordResetToken(token);
 
     appAssert(

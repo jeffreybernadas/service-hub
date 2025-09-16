@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { log } from "@service-listing/utils/logger.util";
+import { log } from "@gig-listing/utils/logger.util";
 import app from "../../package.json";
 
 const enhancedResponse = (req: Request, res: Response, next: NextFunction) => {

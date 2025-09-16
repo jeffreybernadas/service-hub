@@ -20,7 +20,7 @@ module.exports = {
     "/src/__mocks__/",
   ],
   moduleNameMapper: {
-    "@auth/(.*)": ["<rootDir>/src/$1"],
+    "@gig-listing/(.*)": ["<rootDir>/src/$1"],
   },
   coverageThreshold: {
     global: {

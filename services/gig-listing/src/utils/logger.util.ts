@@ -2,7 +2,7 @@ import { winstonLogger } from "@jeffreybernadas/service-hub-helper";
 import {
   ELASTIC_SEARCH_URL,
   SERVICE_NAME,
-} from "@service-listing/constants/env.constants";
+} from "@gig-listing/constants/env.constants";
 import { Logger } from "winston";
 
 /**

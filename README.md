@@ -1,6 +1,6 @@
 _Work in Progress_
 
-A microservice-powered web application that connects customers with contractors offering services. Built with a lot of friendly functionalities and features.
+A microservice-powered web application that connects customers with contractors offering gigs. Built with a lot of friendly functionalities and features.
 
 ## ⚒️ Built with the following technologies:
 

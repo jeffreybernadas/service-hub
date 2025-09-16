@@ -2,8 +2,8 @@ import amqplib from "amqplib";
 import {
   RABBITMQ_ENDPOINT,
   SERVICE_NAME,
-} from "@service-listing/constants/env.constants";
-import { log } from "@service-listing/utils/logger.util";
+} from "@gig-listing/constants/env.constants";
+import { log } from "@gig-listing/utils/logger.util";
 
 /**
  * Infer the types of the connection and channel from amqplib due to
