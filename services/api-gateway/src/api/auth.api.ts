@@ -36,9 +36,37 @@ export const forgotPasswordApi = async (
   return response;
 };
 
-export const resetPasswordApi = async (body: IAuth, token: string): Promise<AxiosResponse> => {
+export const resetPasswordApi = async (
+  body: IAuth,
+  token: string,
+): Promise<AxiosResponse> => {
   const response: AxiosResponse = await axiosAuthInstance.put(
     `/reset-password/${token}`,
+    body,
+  );
+  return response;
+};
+
+export const changePasswordApi = async (
+  body: IAuth,
+): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.put(
+    `/change-password`,
+    body,
+  );
+  return response;
+};
+
+export const getCurrentUserApi = async (): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.get(`/me`);
+  return response;
+};
+
+export const resendVerificationEmailApi = async (
+  body: IAuth,
+): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.post(
+    `/resend-email-verification`,
     body,
   );
   return response;

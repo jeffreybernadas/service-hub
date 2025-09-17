@@ -4,6 +4,9 @@ import {
   verifyEmailApi,
   forgotPasswordApi,
   resetPasswordApi,
+  changePasswordApi,
+  getCurrentUserApi,
+  resendVerificationEmailApi,
 } from "@gateway/api/auth.api";
 import { ServiceResponse } from "@gateway/types/response.type";
 import {
@@ -65,7 +68,6 @@ export const forgotPasswordGatewayHandler = catchErrors(
       await forgotPasswordApi(req.body);
     res.status(OK).json({
       message: response.data.data.message,
-      user: response.data.data.user,
     });
   },
 );
@@ -76,7 +78,37 @@ export const resetPasswordGatewayHandler = catchErrors(
       await resetPasswordApi(req.body, req.params.token);
     res.status(OK).json({
       message: response.data.data.message,
+    });
+  },
+);
+
+export const changePasswordGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await changePasswordApi(req.body);
+    res.status(OK).json({
+      message: response.data.data.message,
+    });
+  },
+);
+
+export const getCurrentUserGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await getCurrentUserApi();
+    res.status(OK).json({
+      message: response.data.data.message,
       user: response.data.data.user,
+    });
+  },
+);
+
+export const resendVerificationEmailGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await resendVerificationEmailApi(req.body);
+    res.status(OK).json({
+      message: response.data.data.message,
     });
   },
 );

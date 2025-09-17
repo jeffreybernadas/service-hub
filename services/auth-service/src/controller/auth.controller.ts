@@ -15,9 +15,12 @@ import {
   OK,
   isEmail,
   NOT_FOUND,
+  UNAUTHORIZED,
+  AppErrorCode,
 } from "@jeffreybernadas/service-hub-helper";
 import crypto from "crypto";
 import {
+  changePasswordSchema,
   emailSchema,
   forgotPasswordSchema,
   signInSchema,
@@ -308,7 +311,7 @@ export const resetPassword = catchErrors(
     appAssert(
       _channel,
       BAD_REQUEST,
-      "Provider updatePassword() error: Channel is undefined.",
+      "Provider resetPassword() error: Channel is undefined.",
       SERVICE_NAME,
       "error",
     );
@@ -323,6 +326,146 @@ export const resetPassword = catchErrors(
 
     res.status(OK).json({
       message: "Password reset request is successful.",
+    });
+  },
+);
+
+export const changePassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const { currentPassword, newPassword } = changePasswordSchema.parse({
+      ...req.body,
+    });
+
+    const existingUser = await getUserByUsername(
+      req.currentUser?.username as string,
+    );
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      "Something went wrong. Please try again.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const passwordMatch = await AuthModel.prototype.comparePassword(
+      currentPassword,
+      existingUser.password as string,
+    );
+
+    appAssert(
+      passwordMatch,
+      BAD_REQUEST,
+      "Current password is incorrect.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const hashedPassword = await AuthModel.prototype.hashPassword(newPassword);
+
+    await updatePassword({
+      id: existingUser.id!,
+      password: hashedPassword,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      template: "password-reset-success",
+      username: existingUser.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider changePassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Change password request is successful. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Change password request is successful.",
+    });
+  },
+);
+
+export const getCurrentUser = catchErrors(
+  async (req: Request, res: Response) => {
+    const existingUser = await getAuthUserById(req.currentUser?.id as number);
+    const hasKey = Object.keys(existingUser).length;
+
+    appAssert(
+      hasKey,
+      UNAUTHORIZED,
+      "Something went wrong. Please login again.",
+      SERVICE_NAME,
+      "error",
+      AppErrorCode.Invalid_Access_Token,
+    );
+
+    res.status(OK).json({
+      message: "User fetched successfully.",
+      user: existingUser,
+    });
+  },
+);
+
+export const resendVerificationEmail = catchErrors(
+  async (req: Request, res: Response) => {
+    const email = emailSchema.parse(req.body.email);
+    const existingUser = await getUserByEmail(lowerCase(email));
+
+    appAssert(
+      existingUser,
+      UNAUTHORIZED,
+      "Something went wrong. Please try again later.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    // For email verification token
+    const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
+    const randomCharacters: string = randomBytes.toString("hex");
+
+    const emailVerificationLink = `${CLIENT_URL}/confirm_email?v_token=${randomCharacters}`;
+
+    await updateEmailVerification({
+      id: existingUser.id as number,
+      emailVerified: 0,
+      emailVerificationToken: randomCharacters,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      verifyLink: emailVerificationLink,
+      template: "verify-email",
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider resendVerificationEmail() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "New verification email sent to the user. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "New verification email sent.",
     });
   },
 );

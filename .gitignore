@@ -7,3 +7,6 @@
 /services/*/coverage
 /services/*/dist
 /.idea
+/node_modules
+/package-lock.json
+/package.json

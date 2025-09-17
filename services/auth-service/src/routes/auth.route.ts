@@ -1,6 +1,9 @@
 import { Router } from "express";
 import {
+  changePassword,
   forgotPassword,
+  getCurrentUser,
+  resendVerificationEmail,
   resetPassword,
   signinHandler,
   signupHandler,
@@ -38,6 +41,24 @@ authRouter.put(
   "/reset-password/:token",
   verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
   resetPassword,
+);
+
+authRouter.put(
+  "/change-password",
+  verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
+  changePassword,
+);
+
+authRouter.get(
+  "/me",
+  verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
+  getCurrentUser,
+);
+
+authRouter.post(
+  "/resend-email-verification",
+  verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
+  resendVerificationEmail,
 );
 
 export default authRouter;
