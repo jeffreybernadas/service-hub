@@ -9,7 +9,10 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
-  modulePathIgnorePatterns: ["<rootDir>/src/__tests__/helpers/*"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/src/__tests__/mocks/*",
+    "<rootDir>/src/__tests__/types/*",
+  ],
   collectCoverageFrom: ["src/**/*.ts"],
   testRegex:
     "(/__tests__/(?!setup).*(\\.|/)(unit|integration|acceptance|test))\\.ts?$",
