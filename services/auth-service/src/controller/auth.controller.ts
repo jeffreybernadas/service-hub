@@ -469,3 +469,20 @@ export const resendVerificationEmail = catchErrors(
     });
   },
 );
+
+export const refreshToken = catchErrors(async (req: Request, res: Response) => {
+  const existingUser = await getUserByUsername(
+    req.currentUser?.username as string,
+  );
+  const userJwt = signToken({
+    id: existingUser.id!,
+    email: existingUser.email!,
+    username: existingUser.username!,
+  });
+
+  res.status(OK).json({
+    message: "Token refreshed.",
+    user: existingUser,
+    token: userJwt,
+  });
+});

@@ -8,6 +8,7 @@ import {
   changePasswordGatewayHandler,
   resendVerificationEmailGatewayHandler,
   getCurrentUserGatewayHandler,
+  refreshTokenGatewayHandler,
 } from "@gateway/controller/auth.controller";
 import {
   checkAuthentication,
@@ -38,6 +39,13 @@ authRouter.post(
   verifyUser,
   checkAuthentication,
   resendVerificationEmailGatewayHandler,
+);
+
+authRouter.get(
+  "/refresh-token",
+  verifyUser,
+  checkAuthentication,
+  refreshTokenGatewayHandler,
 );
 
 export default authRouter;

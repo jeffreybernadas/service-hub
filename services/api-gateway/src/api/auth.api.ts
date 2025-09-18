@@ -71,3 +71,8 @@ export const resendVerificationEmailApi = async (
   );
   return response;
 };
+
+export const refreshTokenApi = async (): Promise<AxiosResponse> => {
+  const response: AxiosResponse = await axiosAuthInstance.get(`/refresh-token`);
+  return response;
+};

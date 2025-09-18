@@ -7,6 +7,7 @@ import {
   changePasswordApi,
   getCurrentUserApi,
   resendVerificationEmailApi,
+  refreshTokenApi,
 } from "@gateway/api/auth.api";
 import { ServiceResponse } from "@gateway/types/response.type";
 import {
@@ -109,6 +110,18 @@ export const resendVerificationEmailGatewayHandler = catchErrors(
       await resendVerificationEmailApi(req.body);
     res.status(OK).json({
       message: response.data.data.message,
+    });
+  },
+);
+
+export const refreshTokenGatewayHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const response: ServiceResponse<SignUpResponseData> =
+      await refreshTokenApi();
+    req.session = { jwt: response.data.data.token };
+    res.status(OK).json({
+      message: response.data.data.message,
+      user: response.data.data.user,
     });
   },
 );

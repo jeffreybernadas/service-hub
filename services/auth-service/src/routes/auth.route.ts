@@ -3,6 +3,7 @@ import {
   changePassword,
   forgotPassword,
   getCurrentUser,
+  refreshToken,
   resendVerificationEmail,
   resetPassword,
   signinHandler,
@@ -59,6 +60,12 @@ authRouter.post(
   "/resend-email-verification",
   verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
   resendVerificationEmail,
+);
+
+authRouter.get(
+  "/refresh-token",
+  verifyGatewayRequest(GATEWAY_JWT_TOKEN_SECRET),
+  refreshToken,
 );
 
 export default authRouter;
