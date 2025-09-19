@@ -13,7 +13,37 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: sonarsource/sonarqube-scan-action@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          cd services/auth-service && npm install
+          cd ../api-gateway && npm install
+          cd ../chat-service && npm install
+          cd ../gig-listing && npm install
+          cd ../notification-service && npm install
+          cd ../order-service && npm install
+          cd ../review-service && npm install
+          cd ../user-service && npm install
+
+      - name: Test and coverage
+        run: |
+          cd services/auth-service && npm test
+          cd ../api-gateway && npm test
+          cd ../chat-service && npm test
+          cd ../gig-listing && npm test
+          cd ../notification-service && npm test
+          cd ../order-service && npm test
+          cd ../review-service && npm test
+          cd ../user-service && npm test
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
