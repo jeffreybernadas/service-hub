@@ -37,11 +37,11 @@ export const authMock: IAuthDocument = {
   id: 1,
   username: "test",
   email: "test@test.com",
-  emailVerificationToken: "93b8237a924b453620864053d76fbf1b47d97c25",
+  emailVerificationToken: "test12345",
   emailVerified: 1,
   country: "my",
   profilePicture:
-    "https://res.cloudinary.com/jeffbdev/image/upload/v1758207271/a5051954-6f05-4303-bc50-a9184d795add.png",
+    "https://res.cloudinary.com/test.png",
   passwordResetExpires: "2025-09-18T14:54:27.301Z",
   createdAt: "2025-09-18T14:54:27.301Z",
   updatedAt: "2025-09-18T14:54:27.302Z",
