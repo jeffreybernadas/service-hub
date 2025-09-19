@@ -70,7 +70,6 @@ app.use(enhancedResponse);
 app.use(`${API_PREFIX}/health`, healthCheckRouter);
 app.use(`${API_PREFIX}/`, authRouter);
 
-
 const startServer = async () => {
   cloudinaryConfig();
   // First establish connection to RabbitMQ
