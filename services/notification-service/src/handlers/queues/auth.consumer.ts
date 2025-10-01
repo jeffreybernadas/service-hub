@@ -14,7 +14,7 @@ import {
 import {
   getOTPVerificationTemplate,
   getPasswordResetSuccessTemplate,
-  getPasswordResetTemplate,
+  getForgotPasswordTemplate,
   getVerifyEmailTemplate,
 } from "@notifications/utils/emailTemplates.util";
 import { log } from "@notifications/utils/logger.util";
@@ -80,7 +80,7 @@ export const consumerAuthEmail = async (
             to: receiverEmail,
             ...getVerifyEmailTemplate(templateData),
           });
-        } else if (template === "password-reset") {
+        } else if (template === "forgot-password") {
           const templateData: IPasswordResetTemplateData = {
             ...baseTemplateData,
             url: resetLink ?? CLIENT_URL,
@@ -88,7 +88,7 @@ export const consumerAuthEmail = async (
           };
           await sendMail({
             to: receiverEmail,
-            ...getPasswordResetTemplate(templateData),
+            ...getForgotPasswordTemplate(templateData),
           });
         } else if (template === "otp-verification") {
           const templateData: IOTPVerificationTemplateData = {

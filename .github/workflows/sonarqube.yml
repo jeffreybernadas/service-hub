@@ -1,0 +1,51 @@
+name: SonarQube Analysis
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sonarqube:
+    name: Scan and Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd services/auth-service && npm install
+          cd ../api-gateway && npm install
+          cd ../chat-service && npm install
+          cd ../gig-listing && npm install
+          cd ../notification-service && npm install
+          cd ../order-service && npm install
+          cd ../review-service && npm install
+          cd ../user-service && npm install
+
+      - name: Test and coverage
+        run: |
+          cd services/auth-service && npm test || true
+          cd ../api-gateway && npm test || true
+          cd ../chat-service && npm test || true
+          cd ../gig-listing && npm test || true
+          cd ../notification-service && npm test || true
+          cd ../order-service && npm test || true
+          cd ../review-service && npm test || true
+          cd ../user-service && npm test || true
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      # - uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -1,0 +1,488 @@
+import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
+import { UploadApiResponse } from "cloudinary";
+import { omit } from "lodash";
+import {
+  appAssert,
+  BAD_REQUEST,
+  cloudinaryFileUpload,
+  CREATED,
+  firstLetterUppercase,
+  IAuthDocument,
+  IEmailMessageDetails,
+  lowerCase,
+  catchErrors,
+  OK,
+  isEmail,
+  NOT_FOUND,
+  UNAUTHORIZED,
+  AppErrorCode,
+} from "@jeffreybernadas/service-hub-helper";
+import crypto from "crypto";
+import {
+  changePasswordSchema,
+  emailSchema,
+  forgotPasswordSchema,
+  signInSchema,
+  signupSchema,
+} from "@auth/schemas/auth.schema";
+import {
+  createAuthUser,
+  getAuthUserById,
+  getAuthUserByVerificationToken,
+  getUserByEmail,
+  getUserByUsername,
+  signToken,
+  updateEmailVerification,
+  forgotPasswordToken,
+  getAuthUserByPasswordResetToken,
+  updatePassword,
+} from "@auth/services/auth.service";
+import { CLIENT_URL, SERVICE_NAME } from "@auth/constants/env.constants";
+import { publishDirectMessage } from "@auth/handlers/queues/auth.producer";
+import { _channel } from "@auth/index";
+import AuthModel from "@auth/models/auth.model";
+
+export const signupHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const {
+      username,
+      password,
+      country,
+      email,
+      profilePicture,
+      browserName,
+      deviceType,
+    } = signupSchema.parse({
+      ...req.body,
+    });
+
+    let profilePictureUpload: UploadApiResponse | null = null;
+    const profilePublicId = uuidv4();
+
+    if (profilePicture) {
+      profilePictureUpload = (await cloudinaryFileUpload(
+        profilePicture,
+        profilePublicId,
+        true,
+        true,
+      )) as UploadApiResponse;
+
+      appAssert(
+        profilePictureUpload.public_id,
+        BAD_REQUEST,
+        "Failed to upload profile picture.",
+        SERVICE_NAME,
+        "error",
+      );
+    }
+
+    // For email verification token
+    const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
+    const randomCharacters: string = randomBytes.toString("hex");
+
+    const data: IAuthDocument = {
+      username: firstLetterUppercase(username),
+      email: lowerCase(email),
+      profilePublicId,
+      password,
+      country,
+      profilePicture: profilePictureUpload?.secure_url,
+      emailVerificationToken: randomCharacters,
+      browserName,
+      deviceType,
+    } as IAuthDocument;
+
+    const user = await createAuthUser(data);
+
+    const emailVerificationLink = `${CLIENT_URL}/confirm_email?v_token=${data.emailVerificationToken}`;
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: user.email,
+      verifyLink: emailVerificationLink,
+      template: "verify-email",
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider signup() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Verification email sent to the user. - Via Notification Service",
+    );
+
+    const userJWT: string = signToken({
+      id: user.id!,
+      email: user.email!,
+      username: user.username!,
+    });
+
+    res.status(CREATED).json({
+      message: "User created successfully",
+      user,
+      token: userJWT,
+    });
+  },
+);
+
+export const signinHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { username, password } = signInSchema.parse({
+      ...req.body,
+    });
+
+    const isValidEmail = isEmail(username);
+    const existingUser = isValidEmail
+      ? await getUserByEmail(username)
+      : await getUserByUsername(username);
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      `User with username or email ${username} not found`,
+      SERVICE_NAME,
+      "error",
+    );
+
+    const passwordMatch = await AuthModel.prototype.comparePassword(
+      password,
+      existingUser.password as string,
+    );
+
+    appAssert(
+      passwordMatch,
+      BAD_REQUEST,
+      "Invalid credentials",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const userJWT: string = signToken({
+      id: existingUser.id!,
+      email: existingUser.email!,
+      username: existingUser.username!,
+    });
+
+    res.status(OK).json({
+      message: "User signed in successfully",
+      user: omit(existingUser, ["password"]),
+      token: userJWT,
+    });
+  },
+);
+
+export const verifyEmail = catchErrors(async (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  const userExisting = await getAuthUserByVerificationToken(token as string);
+  appAssert(
+    userExisting,
+    NOT_FOUND,
+    "Verification token is either invalid, expired or already used",
+    SERVICE_NAME,
+    "error",
+  );
+
+  appAssert(
+    !userExisting.emailVerified,
+    NOT_FOUND,
+    "Email is already verified",
+    SERVICE_NAME,
+    "error",
+  );
+
+  await updateEmailVerification({
+    id: userExisting.id as number,
+    emailVerified: 1,
+  });
+
+  const updatedUser = await getAuthUserById(userExisting.id as number);
+
+  appAssert(
+    updatedUser,
+    BAD_REQUEST,
+    "Email verification failed. Please try again.",
+    SERVICE_NAME,
+    "error",
+  );
+
+  res.status(OK).json({
+    message: "Email verified successfully.",
+    user: updatedUser,
+  });
+});
+
+export const forgotPassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const email = emailSchema.parse(req.body.email);
+
+    const existingUser = await getUserByEmail(email);
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      "Invalid credentials",
+      SERVICE_NAME,
+      "error",
+    );
+
+    // For password reset verification token
+    const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
+    const randomCharacters: string = randomBytes.toString("hex");
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+
+    await forgotPasswordToken({
+      id: existingUser.id as number,
+      passwordResetToken: randomCharacters,
+      passwordResetExpires: date,
+    });
+
+    const resetLink = `${CLIENT_URL}/reset_password?token=${randomCharacters}`;
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      resetLink,
+      template: "forgot-password",
+      username: existingUser.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider forgotPassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Password reset link sent to the user. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Password reset email sent.",
+    });
+  },
+);
+
+export const resetPassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const { newPassword } = forgotPasswordSchema.parse({
+      ...req.body,
+    });
+
+    const { token } = req.params;
+
+    const existingUser = await getAuthUserByPasswordResetToken(token);
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      "The request is not valid or has expired.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const hashedPassword = await AuthModel.prototype.hashPassword(newPassword);
+
+    await updatePassword({
+      id: existingUser.id!,
+      password: hashedPassword,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      template: "password-reset-success",
+      username: existingUser.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider resetPassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Password reset request is successful. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Password reset request is successful.",
+    });
+  },
+);
+
+export const changePassword = catchErrors(
+  async (req: Request, res: Response) => {
+    const { currentPassword, newPassword } = changePasswordSchema.parse({
+      ...req.body,
+    });
+
+    const existingUser = await getUserByUsername(
+      req.currentUser?.username as string,
+    );
+
+    appAssert(
+      existingUser,
+      NOT_FOUND,
+      "Something went wrong. Please try again.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const passwordMatch = await AuthModel.prototype.comparePassword(
+      currentPassword,
+      existingUser.password as string,
+    );
+
+    appAssert(
+      passwordMatch,
+      BAD_REQUEST,
+      "Current password is incorrect.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    const hashedPassword = await AuthModel.prototype.hashPassword(newPassword);
+
+    await updatePassword({
+      id: existingUser.id!,
+      password: hashedPassword,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      template: "password-reset-success",
+      username: existingUser.username,
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider changePassword() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "Change password request is successful. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "Change password request is successful.",
+    });
+  },
+);
+
+export const getCurrentUser = catchErrors(
+  async (req: Request, res: Response) => {
+    const existingUser = await getAuthUserById(req.currentUser?.id as number);
+    const hasKey = Object.keys(existingUser).length;
+
+    appAssert(
+      hasKey,
+      UNAUTHORIZED,
+      "Something went wrong. Please login again.",
+      SERVICE_NAME,
+      "error",
+      AppErrorCode.Invalid_Access_Token,
+    );
+
+    res.status(OK).json({
+      message: "User fetched successfully.",
+      user: existingUser,
+    });
+  },
+);
+
+export const resendVerificationEmail = catchErrors(
+  async (req: Request, res: Response) => {
+    const email = emailSchema.parse(req.body.email);
+    const existingUser = await getUserByEmail(lowerCase(email));
+
+    appAssert(
+      existingUser,
+      UNAUTHORIZED,
+      "Something went wrong. Please try again later.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    // For email verification token
+    const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20));
+    const randomCharacters: string = randomBytes.toString("hex");
+
+    const emailVerificationLink = `${CLIENT_URL}/confirm_email?v_token=${randomCharacters}`;
+
+    await updateEmailVerification({
+      id: existingUser.id as number,
+      emailVerified: 0,
+      emailVerificationToken: randomCharacters,
+    });
+
+    const messageDetails: IEmailMessageDetails = {
+      receiverEmail: existingUser.email,
+      verifyLink: emailVerificationLink,
+      template: "verify-email",
+    };
+
+    appAssert(
+      _channel,
+      BAD_REQUEST,
+      "Provider resendVerificationEmail() error: Channel is undefined.",
+      SERVICE_NAME,
+      "error",
+    );
+
+    await publishDirectMessage(
+      _channel,
+      "service-hub-auth-notification",
+      "auth-email",
+      JSON.stringify(messageDetails),
+      "New verification email sent to the user. - Via Notification Service",
+    );
+
+    res.status(OK).json({
+      message: "New verification email sent.",
+    });
+  },
+);
+
+export const refreshToken = catchErrors(async (req: Request, res: Response) => {
+  const existingUser = await getUserByUsername(
+    req.currentUser?.username as string,
+  );
+  const userJwt = signToken({
+    id: existingUser.id!,
+    email: existingUser.email!,
+    username: existingUser.username!,
+  });
+
+  res.status(OK).json({
+    message: "Token refreshed.",
+    user: existingUser,
+    token: userJwt,
+  });
+});

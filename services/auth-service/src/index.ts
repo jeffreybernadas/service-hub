@@ -15,6 +15,7 @@ import {
 } from "@auth/constants/env.constants";
 import { API_PREFIX, API_VERSION } from "@auth/constants/version.constant";
 import healthCheckRouter from "@auth/routes/health.route";
+import authRouter from "@auth/routes/auth.route";
 import { log } from "@auth/utils/logger.util";
 import enhancedResponse from "@auth/middleware/enhancedResponse.middleware";
 import {
@@ -26,9 +27,11 @@ import compression from "compression";
 import { checkConnection } from "@auth/utils/elasticsearch.util";
 import { initializeApm } from "@auth/utils/apm.util";
 import { AmqpChannel, createConnection } from "@auth/config/rabbitmq.config";
+import { connectToDatabase } from "@auth/config/database.config";
+import { cloudinaryConfig } from "@auth/config/cloudinary.config";
 
 const app = express();
-let _channel: AmqpChannel | undefined;
+export let _channel: AmqpChannel | undefined;
 
 export const getChannel = (): AmqpChannel | undefined => _channel;
 
@@ -65,18 +68,23 @@ app.use(urlencoded({ extended: true, limit: "200mb" }));
 app.use(enhancedResponse);
 
 app.use(`${API_PREFIX}/health`, healthCheckRouter);
-
-app.use(errorHandler);
+app.use(`${API_PREFIX}/`, authRouter);
 
 const startServer = async () => {
+  cloudinaryConfig();
   // First establish connection to RabbitMQ
   _channel = await createConnection();
 
-  // First establish connection to Elasticsearch
+  // Establish connection to Elasticsearch
   await checkConnection();
 
   // Initialize APM after Elasticsearch is connected
   initializeApm();
+
+  // Connect to database
+  await connectToDatabase();
+
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     log.info(`Auth Service (${API_VERSION}) is running on port ${PORT}.`);

@@ -5,6 +5,7 @@ import {
   UNAUTHORIZED,
   AppError,
   BAD_REQUEST,
+  AppErrorCode,
 } from "@jeffreybernadas/service-hub-helper";
 import { verify } from "jsonwebtoken";
 import { JWT_TOKEN_SECRET } from "@gateway/constants/env.constants";
@@ -20,6 +21,7 @@ export const verifyUser = (
     "Token is not available. Please login again.",
     "API Gateway",
     "error",
+    AppErrorCode.Invalid_Access_Token,
   );
 
   try {
@@ -31,9 +33,12 @@ export const verifyUser = (
   } catch (error) {
     throw new AppError(
       UNAUTHORIZED,
-      error instanceof Error ? error.message : "Token is not available. Please login again.",
+      error instanceof Error
+        ? error.message
+        : "Token is not available. Please login again.",
       "API Gateway",
       "error",
+      AppErrorCode.Invalid_Access_Token,
     );
   }
   next();

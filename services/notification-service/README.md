@@ -2,7 +2,7 @@
 
 A microservice responsible for handling all notification-related functionality in the Service Hub platform. This service manages email notifications for authentication, orders, and general system communications.
 
-[![Health Check](https://img.shields.io/badge/Health_Check-URL-green?style=for-the-badge)](https://sh-notif.thecodebit.digital/api/v1/health)
+[![Health Check](https://img.shields.io/badge/Health_Check-URL-green?style=for-the-badge)](https://sh-notif.thecodebit.online/api/v1/health)
 
 ## 📋 Overview
 
