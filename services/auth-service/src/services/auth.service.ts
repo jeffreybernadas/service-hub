@@ -250,5 +250,5 @@ export const signToken = ({
   email: string;
   username: string;
 }): string => {
-  return sign({ id, email, username }, JWT_TOKEN_SECRET as string);
+  return sign({ id, email, username }, JWT_TOKEN_SECRET);
 };
